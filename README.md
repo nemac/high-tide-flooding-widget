@@ -1,6 +1,6 @@
 # jQuery Tidal Stations Widget
 
-This widget displays a timeline of high-tide flooding with historical observations from 1950-2016, and modeled projections from 2000-2100. The data are from Billy Sweet at NOAA; see also Sweet and Park (2014).
+This widget displays a timeline of high-tide flooding with historical observations from 1950-2016, and modeled projections from 2000-2100. The included data is from Billy Sweet at NOAA; see also Sweet and Park (2014).
 
 ## Files needed for deployment
 - tidalstationswidget.js (the widget code)
@@ -14,7 +14,7 @@ This widget displays a timeline of high-tide flooding with historical observatio
 <script src="tidalstationswidget.js"></script>
 ```
 
-2. Define a chart element for the widget to deploy into:
+2. Define a container element for the widget to deploy into:
 
 ```html
 <div id="chart" style="position: relative; height:100%; width: 100%;"></div>
