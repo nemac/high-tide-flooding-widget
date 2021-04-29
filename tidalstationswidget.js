@@ -108,7 +108,7 @@
         fill: "tonexty",
         yaxis: "y2",
         marker: {
-          color: "rgb(170,170,170)",
+          color: "rgba(170,170,170, 0.5)",
           line: {
             color: 'rgb(119,119,119)',
             width: 1.5
@@ -126,7 +126,7 @@
         mode: "lines",
         name: "Lower Emissions",
         fill: "tonexty",
-        fillcolor: 'rgb(25,104,211)',
+        fillcolor: 'rgba(25,104,211, 0.5)',
         line: {
             color: 'rgb(0,88,207)',
             width: 2
@@ -143,7 +143,7 @@
         mode: "lines",
         name: "Higher Emissions",
         fill: "tonexty",
-        fillcolor: 'rgb(246,86,66)',
+        fillcolor: 'rgba(246, 86, 66, 0.5)',
         line: {
             color: 'rgb(245,68,45)',
             width: 2
