@@ -173,7 +173,11 @@
             tickmode: "linear",
             dtick: 75,
             title: {
-              text: 'Annual Days with High-Tide Flooding'
+              text: 'Annual Days with High-Tide Flooding',
+              font: {
+                size: 12,
+                color: '#494949'
+              }
             }
           },
           legend: {
