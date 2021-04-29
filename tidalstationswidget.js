@@ -178,7 +178,8 @@
           },
           legend: {
             "orientation": "h"
-          }
+          },
+          hovermode: 'x unified'
       }
     
       let config = {
