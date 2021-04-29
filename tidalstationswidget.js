@@ -174,12 +174,15 @@
           },
           xaxis: {
             tickmode: "linear",
+            tick0: 1950,
             dtick: 10,
             ticks: "outside",
-            linecolor: 'rgb(0,0,0)'
+            linecolor: 'rgb(0,0,0)',
+            side: "bottom"
           },
           yaxis: {
             tickmode: "linear",
+            tick0: 0,
             dtick: 75,
             ticks: "outside",
             side: "left",
@@ -190,13 +193,23 @@
                 size: 12,
                 color: '#494949'
               }
-            }
+            },
+            range: [0, 365]
           },
           legend: {
             "orientation": "h"
           },
           hovermode: 'x unified',
-          
+          plotly_layout_defaults: {
+            hoverdistance: 50,
+            autosize: true,
+            margin: {
+              l: 50,
+              t: 12,
+              r: 12,
+              b: 30
+            }
+          }
       }
     
       let config = {
