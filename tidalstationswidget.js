@@ -1,8 +1,6 @@
 'use strict';
 (function ($) {
 
-
-
   if (typeof($.widget) === 'undefined') {
     console.error("jQuery Widget not found.");
     return
