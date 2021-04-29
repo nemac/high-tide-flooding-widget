@@ -186,11 +186,14 @@
           legend: {
             "orientation": "h"
           },
-          hovermode: 'x unified'
+          hovermode: 'x unified',
+          
       }
     
       let config = {
-          responsive: true
+          responsive: true,
+          displaylogo: false, 
+          modeBarButtonsToRemove: ['toImage', 'lasso2d', 'select2d','resetScale2d']
       }
     
       Plotly.react(chartDiv, data, layout, config);
