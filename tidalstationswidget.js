@@ -165,11 +165,16 @@
           },
           xaxis: {
             tickmode: "linear",
-            dtick: 10
+            dtick: 10,
+            ticks: "outside",
+            linecolor: 'rgb(0,0,0)'
           },
           yaxis: {
             tickmode: "linear",
             dtick: 75,
+            ticks: "outside",
+            side: "left",
+            linecolor: 'rgb(0,0,0)',
             title: {
               text: 'Annual Days with High-Tide Flooding',
               font: {
