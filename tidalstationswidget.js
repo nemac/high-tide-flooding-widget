@@ -104,7 +104,6 @@
 
       const chartDiv = document.createElement("div");
       chartDiv.id = "chart";
-      chartDiv.style = "70vh";
 
       tidalChart.appendChild(chartDiv);
 
