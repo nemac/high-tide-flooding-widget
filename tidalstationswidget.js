@@ -60,9 +60,17 @@
       }
       // transform data from object to array
       let data_hist = [];
+
       for (let i = 1950; i <= 2016; i++) {
+  
         try {
-          data_hist.push(this.data.floods_historical[String(this.options.station)][i]);
+          let flood_data = this.data.floods_historical[String(this.options.station)][i];
+          
+          if(typeof flood_data === 'undefined') {
+            data_hist.push(0);
+          } else {
+            data_hist.push(this.data.floods_historical[String(this.options.station)][i]);
+          }
         }
         catch (e) {
           if (e instanceof TypeError) {
@@ -75,6 +83,7 @@
       let labels = [];
       let data_rcp45 = [];
       let data_rcp85 = [];
+      
       for (let i = 1950; i <= 2100; i++) {
         // build an array of labels
         labels.push(i);
@@ -89,115 +98,95 @@
         }
       }
 
-      // compose chart
-      if (this.chart !== undefined) {
-        this.chart.destroy()
-      }
-      if (this.nodes.chart === undefined) {
-        this.nodes.chart = $('<canvas></canvas>').uniqueId().appendTo(this.element);
-      }
-      // White background for downloaded images.
-      Chart.plugins.register({
-        beforeDraw: function(chartInstance) {
-          var ctx = chartInstance.chart.ctx;
-          ctx.fillStyle = "white";
-          ctx.fillRect(0, 0, chartInstance.chart.width, chartInstance.chart.height);
-        }
-      });
+      const chartDiv = document.getElementById('chart');
 
-      this.chart = new Chart(this.nodes.chart, {
-        type: 'bar',
-        data: {
-          labels: labels,
-          datasets: [
-            {
-              data: data_hist,
-              label: "Historical",
-              backgroundColor: "#d6d6d6",
-              borderColor: "#aaaaaa",
-              borderWidth: 3,
-              fill: true
-            },
-            {
-              data: data_rcp45,
-              label: "Lower Emissions",
-              backgroundColor: "#99BCEC",
-              borderColor: "#0058cf",
-              borderWidth: 3,
-              fill: true,
-              type: 'line'
-            }, {
-              data: data_rcp85,
-              label: "Higher Emissions",
-              backgroundColor: "#fbb4ab",
-              borderColor: "#f5442d",
-              borderWidth: 3,
-              fill: true,
-              type: 'line'
-            }
-          ]
+      let chart_historic = {
+        type: "bar",
+        x: labels,
+        y: data_hist,
+        name: "Historical",
+        fill: "tonexty",
+        yaxis: "y2",
+        marker: {
+          color: "rgb(170,170,170)",
+          line: {
+            color: 'rgb(119,119,119)',
+            width: 1.5
+          }
         },
-        options: {
-          elements: {point: {radius: 0}},
-          responsive: this.options.responsive,
-          maintainAspectRatio: false,
-          // events: [],
-          tooltips: {
-            mode: 'index',
-            intersect: false,
-            itemSort: function(a, b) {
-              return b.datasetIndex - a.datasetIndex
-            },
-            callbacks: {
-              label: function (tooltipItem, data) {
-                let value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
-                return data.datasets[tooltipItem.datasetIndex].label + ': ' + (Math.round(value * 10) / 10) + ' days';
-              }
-            }
+        hovertemplate: "Historical: <b>%{y}</b>",
+        hoverlabel: {
+          namelength: 0
+        }
+      }
+
+      let chart_rcp45 = {
+        x: labels,
+        y: data_rcp45,
+        mode: "lines",
+        name: "Lower Emissions",
+        fill: "tonexty",
+        fillcolor: 'rgb(25,104,211)',
+        line: {
+            color: 'rgb(0,88,207)',
+            width: 2
+        },
+        hovertemplate: "Lower Emissions: <b>%{y}</b>",
+        hoverlabel: {
+          namelength: 0
+        }
+      }
+
+      let chart_rcp85 = {
+        x: labels,
+        y: data_rcp85,
+        mode: "lines",
+        name: "Higher Emissions",
+        fill: "tonexty",
+        fillcolor: 'rgb(246,86,66)',
+        line: {
+            color: 'rgb(245,68,45)',
+            width: 2
+        },
+        hovertemplate: "Higher Emissions: <b>%{y}</b>",
+        hoverlabel: {
+          namelength: 0
+        }
+      }
+      let data = [chart_historic, chart_rcp45, chart_rcp85]
+    
+      let layout = {
+          yaxis2: {
+            type: 'linear',
+            matches: 'y',
+            overlaying: 'y',
+            showline: false,
+            showgrid: false,
+            showticklabels: false,
+            nticks: 0
           },
-          hover: {
-            mode: 'index',
-            intersect: false
+          xaxis: {
+            tickmode: "linear",
+            dtick: 10
+          },
+          yaxis: {
+            tickmode: "linear",
+            dtick: 75,
+            title: {
+              text: 'Annual Days with High-Tide Flooding'
+            }
           },
           legend: {
-            display: true,
-            labels: {
-              fontColor: 'black'
-            }
-          },
-          scales: {
-            yAxes: [{
-              scaleLabel: {
-                fontSize: 16,
-                labelString: 'Annual Days with High-Tide Flooding',
-                display: true
-              },
-              ticks: {
-                beginAtZero: true,
-                fontSize: 14,
-                max: this.scales[this.options.scale].y_max,
-                stepSize: this.scales[this.options.scale].y_step,
-                maxTicksLimit: 20
-              }
-            }],
-            xAxes: [{
-              scaleLabel: {
-                fontSize: 16,
-                labelString: 'Year',
-                display: true,
-                autoSkipPadding: 80
-              },
-              ticks: {
-                autoskip: true,
-                autoSkipPadding: 60,
-                fontSize: 16,
-                min: 1950,
-                max: this.scales[this.options.scale].x_max,
-              }
-            }]
+            "orientation": "h"
           }
-        }
-      });
+      }
+    
+      let config = {
+          responsive: true
+      }
+    
+      Plotly.react(chartDiv, data, layout, config);
+
     }
   });
 })(jQuery);
