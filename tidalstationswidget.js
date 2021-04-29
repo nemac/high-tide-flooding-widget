@@ -96,7 +96,17 @@
         }
       }
 
-      const chartDiv = document.getElementById('chart');
+      const tidalChart = document.getElementById('tidal-chart');
+
+      if(!tidalChart) {
+        return;
+      }
+
+      const chartDiv = document.createElement("div");
+      chartDiv.id = "chart";
+      chartDiv.style = "70vh";
+
+      tidalChart.appendChild(chartDiv);
 
       let chart_historic = {
         type: "bar",

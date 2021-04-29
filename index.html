@@ -172,10 +172,8 @@
 
         <div class="col-xs-12" style="padding:2rem;">
 
-          <div id="chart" style="height: 70vh"></div>
-
-          <!-- Plotyly testing -->
-          <div id="tester" style="height: 70vh"></div>
+          <div id="tidal-chart"></div>
+          <!-- <div id="chart" style="height: 70vh"></div> -->
 
         </div>
       </div>
@@ -183,16 +181,16 @@
 
     <script>
       $(document).ready(function () {
-        $( "#chart" ).tidalstationwidget();
+        $( "#tidal-chart" ).tidalstationwidget();
       });
 
       $('#station').change(function () {
-        $( "#chart" ).tidalstationwidget({station: $('#station').val()})
+        $( "#tidal-chart" ).tidalstationwidget({station: $('#station').val()})
       });
 
       var zoomed = false;
       $('#zoom-btn').click(function(){
-        $( "#chart" ).tidalstationwidget('zoomToggle');
+        $( "#tidal-chart" ).tidalstationwidget('zoomToggle');
         zoomed = !zoomed;
         if (zoomed) {
           $('#zoom-btn').css({"background-color": "green", "border-color": "green"});
