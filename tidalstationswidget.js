@@ -54,10 +54,10 @@
         hoverdistance: 50,
         autosize: true,
         margin: {
-          l: 1,
-          t: 1,
-          r: 1,
-          b: 1
+          l: 50,
+          t: 5,
+          r: 5,
+          b: 5
         }
       }
     },
