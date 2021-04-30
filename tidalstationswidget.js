@@ -96,16 +96,19 @@
         }
       }
 
-      const tidalChart = document.getElementById('tidal-chart');
+      let tidalChart = document.getElementById('tidal-chart');
 
-      if(!tidalChart) {
+      if(!tidalChart || tidalChart === null) {
         return;
       }
 
-      const chartDiv = document.createElement("div");
-      chartDiv.id = "chart";
+      let chartDiv = document.getElementById("chart");
 
-      tidalChart.appendChild(chartDiv);
+      if(!chartDiv || chartDiv === null) {
+        chartDiv = document.createElement("div");
+        chartDiv.id = "chart";
+        tidalChart.appendChild(chartDiv);
+      }
 
       let chart_historic = {
         type: "bar",
@@ -178,7 +181,8 @@
             dtick: 10,
             ticks: "outside",
             linecolor: 'rgb(0,0,0)',
-            side: "bottom"
+            side: "bottom",
+            range: [1950, 2100]
           },
           yaxis: {
             tickmode: "linear",
