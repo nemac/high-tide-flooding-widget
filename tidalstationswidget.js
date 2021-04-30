@@ -51,15 +51,13 @@
           "orientation": "h"
         },
         hovermode: 'x unified',
-        plotly_layout_defaults: {
-          hoverdistance: 50,
-          autosize: true,
-          margin: {
-            l: 50,
-            t: 12,
-            r: 12,
-            b: 30
-          }
+        hoverdistance: 50,
+        autosize: true,
+        margin: {
+          l: 1,
+          t: 1,
+          r: 1,
+          b: 1
         }
       }
     },
