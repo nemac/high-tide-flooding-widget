@@ -10,7 +10,8 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 
-    <script src="tidalstationswidget.js"></script>
+    <script type="module" src="tidalstationswidget.js"></script>
+    <!-- <script type="module" src="tidalstationswidget_module.js"></script> -->
 
     <style>
       .navbar.navbar-default {
@@ -190,15 +191,25 @@
       </div>
     </div>
 
-    <script>
+    <script type="module">
+
+      import { TidalStationWidget } from './tidalstationswidget_module.js';
+
+      const widget = new TidalStationWidget();
+
       $(document).ready(function () {
-        $( "#tidal-chart" ).tidalstationwidget();
+        // $( "#tidal-chart" ).tidalstationwidget();
+        widget.create();
       });
+
 
       var zoomed = false;
 
       $('#station').change(function () {
-        $( "#tidal-chart" ).tidalstationwidget({station: $('#station').val()})
+        // $( "#tidal-chart" ).tidalstationwidget({station: $('#station').val()})
+
+        widget.setOptions('station', $('#station').val());
+
         zoomed = false;
 
         $('#zoom-btn').css({"background-color": "#c9302c", "border-color": "#ac2925"})
@@ -207,7 +218,8 @@
 
       
       $('#zoom-btn').click(function(){
-        $( "#tidal-chart" ).tidalstationwidget('zoomToggle');
+        // $( "#tidal-chart" ).tidalstationwidget('zoomToggle');
+        widget.zoomToggle();
         zoomed = !zoomed;
         if (zoomed) {
           $('#zoom-btn').css({"background-color": "green", "border-color": "green"});

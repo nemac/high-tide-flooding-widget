@@ -1,4 +1,5 @@
 'use strict';
+
 (function ($) {
 
   if (typeof($.widget) === 'undefined') {
@@ -82,6 +83,7 @@
       }
     },
     _setOption: function (key, value) {
+      console.log(key, value);
       this._super(key, value);
       if (key === 'station') {
         this.options.scale = 'full';
@@ -227,57 +229,6 @@
         }
       }
       let data = [chart_historic, chart_rcp45, chart_rcp85]
-    
-      // let layout = {
-      //     yaxis2: {
-      //       type: 'linear',
-      //       matches: 'y',
-      //       overlaying: 'y',
-      //       showline: false,
-      //       showgrid: false,
-      //       showticklabels: false,
-      //       nticks: 0
-      //     },
-      //     xaxis: {
-      //       tickmode: "linear",
-      //       tick0: 1950,
-      //       dtick: 10,
-      //       ticks: "outside",
-      //       linecolor: 'rgb(0,0,0)',
-      //       side: "bottom",
-      //       range: [1950, 2020]
-      //     },
-      //     yaxis: {
-      //       tickmode: "linear",
-      //       tick0: 0,
-      //       dtick: 75,
-      //       ticks: "outside",
-      //       side: "left",
-      //       linecolor: 'rgb(0,0,0)',
-      //       title: {
-      //         text: 'Annual Days with High-Tide Flooding',
-      //         font: {
-      //           size: 12,
-      //           color: '#494949'
-      //         }
-      //       },
-      //       range: [0, 365]
-      //     },
-      //     legend: {
-      //       "orientation": "h"
-      //     },
-      //     hovermode: 'x unified',
-      //     plotly_layout_defaults: {
-      //       hoverdistance: 50,
-      //       autosize: true,
-      //       margin: {
-      //         l: 50,
-      //         t: 12,
-      //         r: 12,
-      //         b: 30
-      //       }
-      //     }
-      // }
     
       let config = {
           responsive: true,
