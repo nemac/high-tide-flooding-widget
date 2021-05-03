@@ -66,14 +66,15 @@
     },
     data: {},
 
-    _create: function (options) {
+    _create: async function (options) {
       this.nodes = {};
      
-    
-      $.getJSON(this.options.data_url, function (json) {
-        this.data = json;
-        this._update(options);
-      }.bind(this));
+      let response = await fetch(this.options.data_url);
+      let value = await response.json();
+
+      this.data = value;
+      this._update(options);
+
     },
     _destroy: function () {
       if (this.chart !== undefined) {
