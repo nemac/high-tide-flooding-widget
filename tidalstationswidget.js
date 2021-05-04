@@ -72,11 +72,19 @@ export default class TidalStationWidget {
      * Load JSON values into data field.
      */
     async create(options) {
-        let response = await fetch(this.options.data_url);
-        let value = await response.json();
 
-        this.data = value;
-        this.update(options);
+      this.updateOptions(options);
+
+      let response = await fetch(this.options.data_url);
+      let value = await response.json();
+      this.data = value;
+      
+      this.update();
+    }
+
+
+    updateOptions(options) {
+      Object.assign(this.options, options);
     }
 
 
@@ -85,7 +93,7 @@ export default class TidalStationWidget {
      */
     update(options) {
 
-      Object.assign(this.options, options);
+      this.updateOptions(options);
 
         if (!this.options.station) {
             return

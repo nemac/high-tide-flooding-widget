@@ -86,10 +86,15 @@
 
 
       async create(options) {
+        this.updateOptions(options);
         let response = await fetch(this.options.data_url);
         let value = await response.json();
         this.data = value;
-        this.update(options);
+        this.update();
+      }
+
+      updateOptions(options) {
+        Object.assign(this.options, options);
       }
       /**
        * Update Plotly graph with updated values
@@ -97,7 +102,7 @@
 
 
       update(options) {
-        Object.assign(this.options, options);
+        this.updateOptions(options);
 
         if (!this.options.station) {
           return;
