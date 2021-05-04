@@ -4,7 +4,25 @@
   "description": "This widget displays a timeline of high-tide flooding with historical observations from 1950-2016, and modeled projections from 2000-2100. The data are from Billy Sweet at NOAA; see also Sweet and Park (2014).",
   "main": "tidalstationswidget.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "mkdir -p dist && rollup -c --environment=\"build_env:prod\""
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.12.1",
+    "@babel/core": "^7.12.3",
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
+    "@babel/plugin-transform-arrow-functions": "^7.12.1",
+    "@babel/plugin-transform-object-assign": "^7.12.1",
+    "@babel/plugin-transform-regenerator": "^7.12.1",
+    "@babel/plugin-transform-runtime": "^7.10.5",
+    "@babel/plugin-transform-template-literals": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
+    "@rollup/plugin-babel": "^5.2.1",
+    "@rollup/plugin-node-resolve": "^9.0.0",
+    "babel-polyfill": "^6.26.0",
+    "lodash-es": "^4.17.15",
+    "node-static": "~0.7.11",
+    "rollup": "^2.23.0"
   },
   "repository": {
     "type": "git",
