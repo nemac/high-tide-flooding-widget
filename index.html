@@ -193,22 +193,22 @@
 
     <script type="module">
 
-      // import { TidalStationWidget } from './tidalstationswidget_module.js';
+      import TidalStationWidget from './tidalstationswidget.js';
 
       const widget = new TidalStationWidget($('#tidal-chart')[0]);
 
       $(document).ready(function () {
-        $( "#tidal-chart" ).tidalstationwidget();
-        // widget.create();
+        widget.create({
+          data_url: 'https://crt-climate-explorer.nemac.org/data/high-tide-flooding-widget/tidal_data.json'
+        });
       });
 
 
       var zoomed = false;
 
       $('#station').change(function () {
-        $( "#tidal-chart" ).tidalstationwidget({station: $('#station').val()})
-
-        // widget.setOptions('station', $('#station').val());
+  
+        widget.setOptions('station', $('#station').val());
 
         zoomed = false;
 
@@ -218,8 +218,8 @@
 
       
       $('#zoom-btn').click(function(){
-        $( "#tidal-chart" ).tidalstationwidget('zoomToggle');
-        // widget.zoomToggle();
+
+        widget.zoomToggle();
         zoomed = !zoomed;
         if (zoomed) {
           $('#zoom-btn').css({"background-color": "green", "border-color": "green"});
