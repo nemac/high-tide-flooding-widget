@@ -94,6 +94,7 @@
       }
 
       updateOptions(options) {
+        if (typeof options === 'undefined') return;
         Object.assign(this.options, options);
       }
       /**
@@ -213,6 +214,7 @@
         };
         let data = [chart_historic, chart_rcp45, chart_rcp85];
         Plotly.react(chartDiv, data, this.options.layout, this.options.config);
+        console.log("update called");
       }
       /**
        * Called everytime the id #station is changed
