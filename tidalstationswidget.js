@@ -71,9 +71,7 @@ export default class TidalStationWidget {
     /**
      * Load JSON values into data field.
      */
-    async create(options) {
-
-      this.updateOptions(options);
+    async create() {
 
       let response = await fetch(this.options.data_url);
       let value = await response.json();
@@ -83,19 +81,11 @@ export default class TidalStationWidget {
     }
 
 
-    updateOptions(options) {
-      if(typeof options === 'undefined') return;
-      
-      Object.assign(this.options, options);
-    }
-
 
     /**
      * Update Plotly graph with updated values
      */
-    update(options) {
-
-      this.updateOptions(options);
+    update() {
 
         if (!this.options.station) {
             return
