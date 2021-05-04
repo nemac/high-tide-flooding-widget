@@ -5,7 +5,7 @@
 }(this, (function () { 'use strict';
 
     class TidalStationWidget {
-      constructor() {
+      constructor(element) {
         this.options = {
           responsive: true,
           station: '',
@@ -78,24 +78,27 @@
           }
         };
         this.data = {};
+        this.element = element;
       }
       /**
        * Load JSON values into data field.
        */
 
 
-      async create() {
+      async create(options) {
         let response = await fetch(this.options.data_url);
         let value = await response.json();
         this.data = value;
-        this.update();
+        this.update(options);
       }
       /**
        * Update Plotly graph with updated values
        */
 
 
-      update() {
+      update(options) {
+        Object.assign(this.options, options);
+
         if (!this.options.station) {
           return;
         } // transform data from object to array
@@ -138,7 +141,7 @@
           }
         }
 
-        let tidalChart = document.getElementById('tidal-chart');
+        let tidalChart = this.element;
 
         if (!tidalChart || tidalChart === null) {
           return;

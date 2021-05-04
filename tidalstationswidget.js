@@ -1,6 +1,6 @@
 export default class TidalStationWidget {
 
-    constructor() {
+    constructor(element) {
         this.options = {
             responsive: true,
             station: '',
@@ -65,24 +65,28 @@ export default class TidalStationWidget {
             historical: {xrange: [1950, 2020], yrange: [0, 365], y_dtick: 5}
         };
         this.data = {};
+        this.element = element; 
     }
 
     /**
      * Load JSON values into data field.
      */
-    async create() {
+    async create(options) {
         let response = await fetch(this.options.data_url);
         let value = await response.json();
 
         this.data = value;
-        this.update();
+        this.update(options);
     }
 
 
     /**
      * Update Plotly graph with updated values
      */
-    update() {
+    update(options) {
+
+      Object.assign(this.options, options);
+
         if (!this.options.station) {
             return
           }
@@ -128,7 +132,7 @@ export default class TidalStationWidget {
             }
           }
     
-          let tidalChart = document.getElementById('tidal-chart');
+          let tidalChart = this.element;
     
           if(!tidalChart || tidalChart === null) {
             return;
