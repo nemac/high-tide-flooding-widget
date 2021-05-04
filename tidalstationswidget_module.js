@@ -1,4 +1,4 @@
-class TidalStationWidget {
+export default class TidalStationWidget {
 
     constructor() {
         this.options = {
@@ -243,5 +243,3 @@ class TidalStationWidget {
     }
 
 }
-
-export { TidalStationWidget }

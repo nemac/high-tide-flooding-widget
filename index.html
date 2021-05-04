@@ -193,22 +193,22 @@
 
     <script type="module">
 
-      import { TidalStationWidget } from './tidalstationswidget_module.js';
+      // import { TidalStationWidget } from './tidalstationswidget_module.js';
 
-      const widget = new TidalStationWidget();
+      // const widget = new TidalStationWidget();
 
       $(document).ready(function () {
-        // $( "#tidal-chart" ).tidalstationwidget();
-        widget.create();
+        $( "#tidal-chart" ).tidalstationwidget();
+        // widget.create();
       });
 
 
       var zoomed = false;
 
       $('#station').change(function () {
-        // $( "#tidal-chart" ).tidalstationwidget({station: $('#station').val()})
+        $( "#tidal-chart" ).tidalstationwidget({station: $('#station').val()})
 
-        widget.setOptions('station', $('#station').val());
+        // widget.setOptions('station', $('#station').val());
 
         zoomed = false;
 
@@ -218,8 +218,8 @@
 
       
       $('#zoom-btn').click(function(){
-        // $( "#tidal-chart" ).tidalstationwidget('zoomToggle');
-        widget.zoomToggle();
+        $( "#tidal-chart" ).tidalstationwidget('zoomToggle');
+        // widget.zoomToggle();
         zoomed = !zoomed;
         if (zoomed) {
           $('#zoom-btn').css({"background-color": "green", "border-color": "green"});
