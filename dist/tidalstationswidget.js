@@ -79,24 +79,57 @@
         };
         this.data = {};
         this.element = element;
+        this._when_data = fetch(this.options.data_url).then(a => a.json()).then(data => {
+          this.data = data;
+        });
+        this.chart_element = null;
+        this.request_update();
       }
       /**
        * Load JSON values into data field.
        */
 
 
-      async create() {
-        let response = await fetch(this.options.data_url);
-        let value = await response.json();
-        this.data = value;
-        this.update();
+      async request_update(options = {}) {
+        await this._when_data;
+
+        if ('station' in options && options['station'] !== this.options.station) {
+          this.options.station = options['station'];
+          this.options.scale = 'full';
+          this.scales = {
+            full: {
+              xrange: [1950, 2100],
+              yrange: [0, 365],
+              y_dtick: 75
+            },
+            historical: {
+              xrange: [1950, 2020],
+              yrange: [0, 365],
+              y_dtick: 5
+            }
+          };
+          this.options.layout.xaxis.range = this.scales[this.options.scale].xrange;
+          this.options.layout.yaxis.range = this.scales[this.options.scale].yrange;
+          this.options.layout.yaxis.dtick = this.scales[this.options.scale].y_dtick;
+
+          this._update();
+        } else if ('scale' in options && options['scale'] !== this.options.scale) {
+          this.options.scale = options['scale'];
+          this.options.layout.xaxis.range = this.scales[this.options.scale].xrange;
+          this.options.layout.yaxis.range = this.scales[this.options.scale].yrange;
+          this.options.layout.yaxis.dtick = this.scales[this.options.scale].y_dtick;
+
+          this._update();
+        } else if (!this.chart_element) {
+          this._update();
+        }
       }
       /**
        * Update Plotly graph with updated values
        */
 
 
-      update() {
+      _update() {
         if (!this.options.station) {
           return;
         } // transform data from object to array
@@ -107,12 +140,7 @@
         for (let i = 1950; i <= 2016; i++) {
           try {
             let flood_data = this.data.floods_historical[String(this.options.station)][i];
-
-            if (typeof flood_data === 'undefined') {
-              data_hist.push(0);
-            } else {
-              data_hist.push(flood_data);
-            }
+            data_hist.push(typeof flood_data !== 'undefined' ? flood_data : 0);
           } catch (e) {
             if (e instanceof TypeError) {
               data_hist.push(0);
@@ -139,18 +167,16 @@
           }
         }
 
-        let tidalChart = this.element;
-
-        if (!tidalChart || tidalChart === null) {
+        if (!this.element) {
           return;
         }
 
-        let chartDiv = document.getElementById("chart");
+        this.chart_element = this.element.querySelector('.chart');
 
-        if (!chartDiv || chartDiv === null) {
-          chartDiv = document.createElement("div");
-          chartDiv.id = "chart";
-          tidalChart.appendChild(chartDiv);
+        if (!this.chart_element) {
+          this.chart_element = document.createElement("div");
+          this.chart_element.classList.add("chart");
+          this.element.appendChild(this.chart_element);
         }
 
         let chart_historic = {
@@ -205,54 +231,18 @@
           }
         };
         let data = [chart_historic, chart_rcp45, chart_rcp85];
-        Plotly.react(chartDiv, data, this.options.layout, this.options.config);
+        Plotly.react(this.chart_element, data, this.options.layout, this.options.config);
         console.log("update called");
-      }
-      /**
-       * Called everytime the id #station is changed
-       * @param {*} key : 'station'
-       * @param {*} value : value of station
-       */
-
-
-      setOptions(key, value) {
-        if (key === 'station') {
-          this.options.station = value;
-          this.options.scale = 'full';
-          this.scales = {
-            full: {
-              xrange: [1950, 2100],
-              yrange: [0, 365],
-              y_dtick: 75
-            },
-            historical: {
-              xrange: [1950, 2020],
-              yrange: [0, 365],
-              y_dtick: 5
-            }
-          };
-          this.options.layout.xaxis.range = this.scales[this.options.scale].xrange;
-          this.options.layout.yaxis.range = this.scales[this.options.scale].yrange;
-          this.options.layout.yaxis.dtick = this.scales[this.options.scale].y_dtick;
-          this.update();
-        }
       }
       /**
        * Toggle the zoom between historical and normal viewing of the graph
        */
 
 
-      zoomToggle() {
-        if (this.options.scale === 'historical') {
-          this.options.scale = 'full';
-        } else {
-          this.options.scale = 'historical';
-        }
-
-        this.options.layout.xaxis.range = this.scales[this.options.scale].xrange;
-        this.options.layout.yaxis.range = this.scales[this.options.scale].yrange;
-        this.options.layout.yaxis.dtick = this.scales[this.options.scale].y_dtick;
-        this.update();
+      async zoomToggle() {
+        return this.request_update({
+          scale: this.options.scale === 'historical' ? 'full' : 'historical'
+        });
       }
 
     }
