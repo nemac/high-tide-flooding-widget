@@ -48,9 +48,9 @@ export default class TidalStationWidget {
               autosize: true,
               margin: {
                 l: 50,
-                t: 5,
-                r: 5,
-                b: 5
+                t: 2,
+                r: 50,
+                b: 2
               }
             },
             config: {

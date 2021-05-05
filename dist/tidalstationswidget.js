@@ -54,9 +54,9 @@
             autosize: true,
             margin: {
               l: 50,
-              t: 5,
-              r: 5,
-              b: 5
+              t: 2,
+              r: 50,
+              b: 2
             }
           },
           config: {
@@ -132,7 +132,6 @@
             });
           });
           await this._when_chart;
-          console.log(this._when_chart);
         }
       }
       /**
@@ -243,7 +242,6 @@
         };
         let data = [chart_historic, chart_rcp45, chart_rcp85];
         Plotly.react(this.chart_element, data, this.options.layout, this.options.config);
-        console.log("update called");
       }
       /**
        * Toggle the zoom between historical and normal viewing of the graph
