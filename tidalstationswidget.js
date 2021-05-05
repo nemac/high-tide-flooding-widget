@@ -1,5 +1,5 @@
 export default class TidalStationWidget {
-    constructor(element) {
+    constructor(element, options={}) {
         this.options = {
             responsive: true,
             station: '',
@@ -65,11 +65,13 @@ export default class TidalStationWidget {
         };
         this.data = {};
         this.element = element;
+        this.chart_element = null;
+        
+        Object.assign(this.options, options);
+      
         this._when_data = fetch(this.options.data_url).then((a)=>a.json()).then((data)=>{
           this.data = data
         });
-        this.chart_element = null;
-      
         this.request_update();
     }
 

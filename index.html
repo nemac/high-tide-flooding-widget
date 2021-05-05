@@ -192,7 +192,9 @@
 
     <script>
       //globals TidalStationWidget
-      const widget = new TidalStationsWidget($('#tidal-chart')[0]);
+      const widget = new TidalStationsWidget($('#tidal-chart')[0], {
+        data_url: 'https://crt-climate-explorer.nemac.org/data/high-tide-flooding-widget/tidal_data.json'
+      });
 
       let zoomed = false;
 
