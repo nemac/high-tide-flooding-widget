@@ -233,7 +233,6 @@ export default class TidalStationWidget {
         
           Plotly.react(this.chart_element, data, this.options.layout, this.options.config);
           
-          console.log("update called");
     }
 
 
