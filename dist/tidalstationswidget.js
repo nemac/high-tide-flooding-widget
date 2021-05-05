@@ -124,6 +124,16 @@
         } else if (!this.chart_element) {
           this._update();
         }
+
+        if (this.chart_element !== null) {
+          this._when_chart = new Promise(resolve => {
+            this.chart_element.once('plotly_afterplot', gd => {
+              resolve(gd);
+            });
+          });
+          await this._when_chart;
+          console.log(this._when_chart);
+        }
       }
       /**
        * Update Plotly graph with updated values
