@@ -149,41 +149,48 @@ export default class TidalStationWidget {
             return
           }
           // transform data from object to array
-          let data_hist = [];
-    
-          for (let i = 1950; i <= 2016; i++) {
-      
-            try {
-              let flood_data = this.data.floods_historical[String(this.options.station)][i];
-              data_hist.push(typeof flood_data !== 'undefined' ? flood_data : 0);
-            }
-            catch (e) {
-              if (e instanceof TypeError) {
-                data_hist.push(0);
-              }
-            }
+          let data_hist = {
+            maj: [],
+            min: [],
+            mod: []
           }
-    
-          this.scales.historical.yrange[1] = Math.max(...data_hist) * 2;
+
+          let floods_historical = this.data.floods_historical.AnnualFloodCount;
+
+          for (let i = 0; i < floods_historical.length; i++) {
+            data_hist.maj.push(floods_historical[i].majCount);
+            data_hist.min.push(floods_historical[i].minCount);
+            data_hist.mod.push(floods_historical[i].modCount);
+          }
+
+          this.scales.historical.yrange[1] = Math.max(...data_hist.maj, ...data_hist.min, ...data_hist.mod) * 2;
     
           // turn projected data values into an array
           let labels = [];
-          let data_rcp45 = [];
-          let data_rcp85 = [];
+          let data_rcp45 = []; //int_low
+          let data_rcp85 = []; //int
           
-          for (let i = 1950; i <= 2100; i++) {
+          let projection = this.data.projection.AnnualProjection;
+          let position = 0;
+
+          for (let i = 1920; i <= 2100; i++) {
             // build an array of labels
             labels.push(i);
     
             // prepend 0s to historical range
-            if (i <= 2000) {
+            if (i < 2021) {
               data_rcp45.push(0);
               data_rcp85.push(0);
             } else {
-              data_rcp45.push(this.data.int_low[String(this.options.station)][i]);
-              data_rcp85.push(this.data.int[String(this.options.station)][i]);
+              
+              data_rcp45.push(projection[position].intLow);
+              data_rcp85.push(projection[position].intermediate);
+              position++;
             }
           }
+
+          console.log(data_rcp45);
+          console.log(data_rcp85);
     
           if(!this.element) {
             return;
@@ -197,17 +204,37 @@ export default class TidalStationWidget {
             this.element.appendChild(this.chart_element);
           }
     
-          let chart_historic = {
+          let chart_historic_maj = {
             type: "bar",
             x: labels,
-            y: data_hist,
-            name: "Historical",
+            y: data_hist.maj,
+            name: "Major",
             fill: "tonexty",
             yaxis: "y2",
             marker: {
-              color: "rgba(170,170,170, 0.5)",
+              color: "rgba(204, 0, 0, 0.5)",
               line: {
-                color: 'rgb(119,119,119)',
+                color: 'rgb(204, 0, 0)',
+                width: 1.5
+              }
+            },
+            hovertemplate: "Historical: <b>%{y}</b>",
+            hoverlabel: {
+              namelength: 0
+            }
+          }
+
+          let chart_historic_min = {
+            type: "bar",
+            x: labels,
+            y: data_hist.min,
+            name: "Minor",
+            fill: "tonexty",
+            yaxis: "y2",
+            marker: {
+              color: "rgba(7, 217, 0, 0.5)",
+              line: {
+                color: 'rgb(7, 217, 0)',
                 width: 1.5
               }
             },
@@ -217,6 +244,26 @@ export default class TidalStationWidget {
             }
           }
     
+          let chart_historic_mod = {
+            type: "bar",
+            x: labels,
+            y: data_hist.mod,
+            name: "Moderate",
+            fill: "tonexty",
+            yaxis: "y2",
+            marker: {
+              color: "rgba(217, 195, 0, 0.5)",
+              line: {
+                color: 'rgb(217, 195, 0)',
+                width: 1.5
+              }
+            },
+            hovertemplate: "Historical: <b>%{y}</b>",
+            hoverlabel: {
+              namelength: 0
+            }
+          }
+
           let chart_rcp45 = {
             x: labels,
             y: data_rcp45,
@@ -250,7 +297,7 @@ export default class TidalStationWidget {
               namelength: 0
             }
           }
-          let data = [chart_historic, chart_rcp45, chart_rcp85]
+          let data = [chart_historic_maj, chart_historic_min, chart_historic_mod, chart_rcp45, chart_rcp85]
         
           Plotly.react(this.chart_element, data, this.options.layout, this.options.config);
           

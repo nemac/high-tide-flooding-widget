@@ -170,35 +170,35 @@
         } // transform data from object to array
 
 
-        let data_hist = [];
+      let data_hist = [];
 
-        for (let i = 1950; i <= 2016; i++) {
-          try {
-            let flood_data = this.data.floods_historical[String(this.options.station)][i];
-            data_hist.push(typeof flood_data !== 'undefined' ? flood_data : 0);
-          } catch (e) {
-            if (e instanceof TypeError) {
-              data_hist.push(0);
-            }
+      for (let i = 1950; i <= 2016; i++) {
+        try {
+          let flood_data = this.data.floods_historical[String(this.options.station)][i];
+          data_hist.push(typeof flood_data !== 'undefined' ? flood_data : 0);
+        } catch (e) {
+          if (e instanceof TypeError) {
+            data_hist.push(0);
           }
         }
+        }
 
-        this.scales.historical.yrange[1] = Math.max(...data_hist) * 2; // turn projected data values into an array
+      this.scales.historical.yrange[1] = Math.max(...data_hist) * 2; // turn projected data values into an array
 
         let labels = [];
-        let data_rcp45 = [];
-        let data_rcp85 = [];
+      let data_rcp45 = [];
+      let data_rcp85 = [];
 
-        for (let i = 1950; i <= 2100; i++) {
+      for (let i = 1950; i <= 2100; i++) {
           // build an array of labels
           labels.push(i); // prepend 0s to historical range
 
-          if (i <= 2000) {
+        if (i <= 2000) {
             data_rcp45.push(0);
             data_rcp85.push(0);
           } else {
-            data_rcp45.push(this.data.int_low[String(this.options.station)][i]);
-            data_rcp85.push(this.data.int[String(this.options.station)][i]);
+          data_rcp45.push(this.data.int_low[String(this.options.station)][i]);
+          data_rcp85.push(this.data.int[String(this.options.station)][i]);
           }
         }
 
@@ -214,17 +214,17 @@
           this.element.appendChild(this.chart_element);
         }
 
-        let chart_historic = {
+      let chart_historic = {
           type: "bar",
           x: labels,
-          y: data_hist,
-          name: "Historical",
+        y: data_hist,
+        name: "Historical",
           fill: "tonexty",
           yaxis: "y2",
           marker: {
-            color: "rgba(170,170,170, 0.5)",
+          color: "rgba(170,170,170, 0.5)",
             line: {
-              color: 'rgb(119,119,119)',
+            color: 'rgb(119,119,119)',
               width: 1.5
             }
           },
@@ -265,7 +265,7 @@
             namelength: 0
           }
         };
-        let data = [chart_historic, chart_rcp45, chart_rcp85];
+      let data = [chart_historic, chart_rcp45, chart_rcp85];
         Plotly.react(this.chart_element, data, this.options.layout, this.options.config);
       }
       /**
