@@ -69,9 +69,11 @@ export default class TidalStationWidget {
         
         Object.assign(this.options, options);
       
-        this._when_data = fetch(this.options.data_url).then((a)=>a.json()).then((data)=>{
-          this.data = data
-        });
+        // this._when_data = fetch(this.options.data_url).then((a)=>a.json()).then((data)=>{
+        //   this.data = data
+        // });
+
+        this._cache = new Map();
         this.request_update();
     }
 
@@ -79,7 +81,11 @@ export default class TidalStationWidget {
      * Load JSON values into data field.
      */
     async request_update(options={}) {
-      await this._when_data;
+      
+      // await this._when_data;
+      
+      //if(this._cache.get(this.)
+
       if ('station' in options && options['station'] !== this.options.station) {
         this.options.station = options['station'];
         this.options.scale = 'full';
@@ -114,8 +120,6 @@ export default class TidalStationWidget {
         await this._when_chart;
       }
       
-
- 
     }
 
 
