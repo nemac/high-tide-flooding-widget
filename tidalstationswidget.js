@@ -61,7 +61,7 @@ export default class TidalStationWidget {
         };
         this.scales = {
             full: {xrange: [1950, 2100], yrange: [0, 365], y_dtick: 75},
-            historical: {xrange: [1950, 2020], yrange: [0, 365], y_dtick: 5}
+            historical: {xrange: [1950, 2021], yrange: [0, 365], y_dtick: 5}
         };
         this.data = {};
         this.element = element;
@@ -85,21 +85,18 @@ export default class TidalStationWidget {
 
         if(this._cache.has(station)) {
           this.data = this._cache.get(station);
-          console.log(`${station} is in the cache`, this.data);
         } else {
 
-          console.log(`fetching data for ${station}`);
 
           let _historical_res = await fetch(`https://api.tidesandcurrents.noaa.gov/dpapi/prod/webapi/htf/htf_annual.json?station=${station}`);
           let _projection_res = await fetch(`https://api.tidesandcurrents.noaa.gov/dpapi/prod/webapi/htf/htf_projection_annual.json?station=${station}`);
-
+  
           let _historical = await _historical_res.json();
           let _projection = await _projection_res.json();
 
           this.data = {floods_historical: _historical, projection: _projection};
           this._cache.set(station, this.data);
 
-          console.log(`data set ${station}`, this.data);
         }
       }
 
@@ -109,7 +106,7 @@ export default class TidalStationWidget {
         this.options.scale = 'full';
         this.scales = {
           full: {xrange: [1950, 2100], yrange: [0, 365], y_dtick: 75},
-          historical: {xrange: [1950, 2020], yrange: [0, 365], y_dtick: 5}
+          historical: {xrange: [1950, 2021], yrange: [0, 365], y_dtick: 5}
         };
 
         this.options.layout.xaxis.range = this.scales[this.options.scale].xrange;
@@ -189,9 +186,6 @@ export default class TidalStationWidget {
             }
           }
 
-          console.log(data_rcp45);
-          console.log(data_rcp85);
-    
           if(!this.element) {
             return;
           }
@@ -203,26 +197,7 @@ export default class TidalStationWidget {
             this.chart_element.classList.add("chart");
             this.element.appendChild(this.chart_element);
           }
-    
-          let chart_historic_maj = {
-            type: "bar",
-            x: labels,
-            y: data_hist.maj,
-            name: "Major",
-            fill: "tonexty",
-            yaxis: "y2",
-            marker: {
-              color: "rgba(204, 0, 0, 0.5)",
-              line: {
-                color: 'rgb(204, 0, 0)',
-                width: 1.5
-              }
-            },
-            hovertemplate: "Historical: <b>%{y}</b>",
-            hoverlabel: {
-              namelength: 0
-            }
-          }
+
 
           let chart_historic_min = {
             type: "bar",
@@ -238,7 +213,7 @@ export default class TidalStationWidget {
                 width: 1.5
               }
             },
-            hovertemplate: "Historical: <b>%{y}</b>",
+            hovertemplate: "Minor: <b>%{y}</b>",
             hoverlabel: {
               namelength: 0
             }
@@ -258,7 +233,27 @@ export default class TidalStationWidget {
                 width: 1.5
               }
             },
-            hovertemplate: "Historical: <b>%{y}</b>",
+            hovertemplate: "Moderate: <b>%{y}</b>",
+            hoverlabel: {
+              namelength: 0
+            }
+          }
+
+          let chart_historic_maj = {
+            type: "bar",
+            x: labels,
+            y: data_hist.maj,
+            name: "Major",
+            fill: "tonexty",
+            yaxis: "y2",
+            marker: {
+              color: "rgba(204, 0, 0, 0.5)",
+              line: {
+                color: 'rgb(204, 0, 0)',
+                width: 1.5
+              }
+            },
+            hovertemplate: "Major: <b>%{y}</b>",
             hoverlabel: {
               namelength: 0
             }
@@ -297,7 +292,8 @@ export default class TidalStationWidget {
               namelength: 0
             }
           }
-          let data = [chart_historic_maj, chart_historic_min, chart_historic_mod, chart_rcp45, chart_rcp85]
+
+          let data = [chart_historic_min, chart_historic_mod, chart_historic_maj, chart_rcp45, chart_rcp85]
         
           Plotly.react(this.chart_element, data, this.options.layout, this.options.config);
           
