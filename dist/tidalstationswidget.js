@@ -72,7 +72,7 @@
           y_dtick: 75
         },
         historical: {
-          xrange: [1950, 2020],
+          xrange: [1950, 2021],
           yrange: [0, 365],
           y_dtick: 5
         }
@@ -99,10 +99,7 @@
 
         if (this._cache.has(station)) {
           this.data = this._cache.get(station);
-          console.log(`${station} is in the cache`, this.data);
         } else {
-          console.log(`fetching data for ${station}`);
-
           let _historical_res = await fetch(`https://api.tidesandcurrents.noaa.gov/dpapi/prod/webapi/htf/htf_annual.json?station=${station}`);
 
           let _projection_res = await fetch(`https://api.tidesandcurrents.noaa.gov/dpapi/prod/webapi/htf/htf_projection_annual.json?station=${station}`);
@@ -117,8 +114,6 @@
           };
 
           this._cache.set(station, this.data);
-
-          console.log(`data set ${station}`, this.data);
         }
       }
 
@@ -132,7 +127,7 @@
             y_dtick: 75
           },
           historical: {
-            xrange: [1950, 2020],
+            xrange: [1950, 2021],
             yrange: [0, 365],
             y_dtick: 5
           }
@@ -210,9 +205,6 @@
         }
       }
 
-      console.log(data_rcp45);
-      console.log(data_rcp85);
-
       if (!this.element) {
         return;
       }
@@ -225,25 +217,6 @@
         this.element.appendChild(this.chart_element);
       }
 
-      let chart_historic_maj = {
-        type: "bar",
-        x: labels,
-        y: data_hist.maj,
-        name: "Major",
-        fill: "tonexty",
-        yaxis: "y2",
-        marker: {
-          color: "rgba(204, 0, 0, 0.5)",
-          line: {
-            color: 'rgb(204, 0, 0)',
-            width: 1.5
-          }
-        },
-        hovertemplate: "Historical: <b>%{y}</b>",
-        hoverlabel: {
-          namelength: 0
-        }
-      };
       let chart_historic_min = {
         type: "bar",
         x: labels,
@@ -258,7 +231,7 @@
             width: 1.5
           }
         },
-        hovertemplate: "Historical: <b>%{y}</b>",
+        hovertemplate: "Minor: <b>%{y}</b>",
         hoverlabel: {
           namelength: 0
         }
@@ -277,7 +250,26 @@
             width: 1.5
           }
         },
-        hovertemplate: "Historical: <b>%{y}</b>",
+        hovertemplate: "Moderate: <b>%{y}</b>",
+        hoverlabel: {
+          namelength: 0
+        }
+      };
+      let chart_historic_maj = {
+        type: "bar",
+        x: labels,
+        y: data_hist.maj,
+        name: "Major",
+        fill: "tonexty",
+        yaxis: "y2",
+        marker: {
+          color: "rgba(204, 0, 0, 0.5)",
+          line: {
+            color: 'rgb(204, 0, 0)',
+            width: 1.5
+          }
+        },
+        hovertemplate: "Major: <b>%{y}</b>",
         hoverlabel: {
           namelength: 0
         }
@@ -314,7 +306,7 @@
           namelength: 0
         }
       };
-      let data = [chart_historic_maj, chart_historic_min, chart_historic_mod, chart_rcp45, chart_rcp85];
+      let data = [chart_historic_min, chart_historic_mod, chart_historic_maj, chart_rcp45, chart_rcp85];
       Plotly.react(this.chart_element, data, this.options.layout, this.options.config);
     }
     /**
