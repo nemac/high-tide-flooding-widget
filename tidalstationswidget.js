@@ -83,8 +83,30 @@ export default class TidalStationWidget {
     async request_update(options={}) {
       
       // await this._when_data;
-      
-      //if(this._cache.get(this.)
+      if(this.options.station || ('station' in options && options['station'] !== this.options.station)) {
+
+        let station = 'station' in options ? options['station'] : this.options.station;
+
+        if(this._cache.has(station)) {
+          this.data = this._cache.get(station);
+          console.log(`${station} is in the cache`, this.data);
+        } else {
+  
+          console.log(`fetching data for ${station}`);
+  
+          let _historical_res = await fetch(`https://api.tidesandcurrents.noaa.gov/dpapi/prod/webapi/htf/htf_annual.json?station=${station}`);
+          let _projection_res = await fetch(`https://api.tidesandcurrents.noaa.gov/dpapi/prod/webapi/htf/htf_projection_annual.json?station=${station}`);
+  
+          let _historical = await _historical_res.json();
+          let _projection = await _projection_res.json();
+
+          this.data = {floods_historical: _historical, projection: _projection};
+          this._cache.set(station, this.data);
+  
+          console.log(`data set ${station}`, this.data);
+        }
+      }
+
 
       if ('station' in options && options['station'] !== this.options.station) {
         this.options.station = options['station'];
@@ -121,7 +143,6 @@ export default class TidalStationWidget {
       }
       
     }
-
 
 
     /**
