@@ -168,6 +168,7 @@
                       <option value="9755371">San Juan, PR</option>
                       <option value="9759110">Magueyes Island, PR</option>
                     </select>
+                    <a type="button" id="download-tidal-image" href="javascript:void(0)">Download Image</a>
                   </form>
                 </div>
               </div>
@@ -218,6 +219,13 @@
           $('#zoom-btn').css({"background-color": "#c9302c", "border-color": "#ac2925"})
         }
       });
+
+      $('#download-tidal-image').click(function(e) {
+
+        e.preventDefault();
+        widget.request_download_image();
+
+      })
 
     </script>
 

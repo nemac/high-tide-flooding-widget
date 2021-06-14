@@ -72,7 +72,6 @@ export default class TidalStationWidget {
         this._when_data = fetch(this.options.data_url).then((a)=>a.json()).then((data)=>{
           this.data = data
         });
-        this.request_update();
     }
 
     /**
@@ -113,12 +112,24 @@ export default class TidalStationWidget {
 
         await this._when_chart;
       }
-      
 
- 
     }
 
+    async request_download_image() {
 
+        if(this.chart_element == null) return;
+
+        let {width, height} = window.getComputedStyle(this.element);
+
+        width = Number.parseFloat(width) * 1.2;
+        height = Number.parseFloat(height) * 1.2;
+
+        return Plotly.downloadImage(this.chart_element, {
+            format: 'png', width: width, height: height, filename: "high_tide_flooding_" + this.options.station + ".png"
+        });
+
+
+    }
 
     /**
      * Update Plotly graph with updated values
@@ -232,7 +243,7 @@ export default class TidalStationWidget {
           let data = [chart_historic, chart_rcp45, chart_rcp85]
         
           Plotly.react(this.chart_element, data, this.options.layout, this.options.config);
-          
+
     }
 
 
