@@ -227,7 +227,7 @@
         type: "bar",
         x: labels,
         y: data_hist,
-        name: "Historical inundation events",
+        name: "Historical",
         fill: "tonexty",
         yaxis: "y2",
         marker: {
@@ -237,7 +237,7 @@
             width: 1.5
           }
         },
-        hovertemplate: "Historical inundation events: <b>%{y}</b>",
+        hovertemplate: "Historical: <b>%{y}</b>",
         hoverlabel: {
           namelength: 0
         }
