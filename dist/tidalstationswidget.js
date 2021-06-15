@@ -72,7 +72,7 @@
           y_dtick: 75
         },
         historical: {
-          xrange: [1950, 2021],
+          xrange: [1950, new Date().getFullYear()],
           yrange: [0, 365],
           y_dtick: 5
         }
@@ -123,7 +123,7 @@
             y_dtick: 75
           },
           historical: {
-            xrange: [1950, 2021],
+            xrange: [1950, new Date().getFullYear()],
             yrange: [0, 365],
             y_dtick: 5
           }
@@ -180,16 +180,14 @@
       } // transform data from object to array
 
 
-      let data_hist = {
-        min: []
-      };
+      let data_hist = [];
       let floods_historical = this.data.floods_historical.AnnualFloodCount;
 
       for (let i = 0; i < floods_historical.length; i++) {
-        data_hist.min.push(floods_historical[i].minCount);
+        data_hist.push(floods_historical[i].minCount);
       }
 
-      this.scales.historical.yrange[1] = Math.max(...data_hist.min) * 2; // turn projected data values into an array
+      this.scales.historical.yrange[1] = Math.max(...data_hist) * 2; // turn projected data values into an array
 
       let labels = [];
       let data_rcp45 = []; //int_low
@@ -197,19 +195,19 @@
       let data_rcp85 = []; //int
 
       let projection = this.data.projection.AnnualProjection;
-      let position = 0;
+      let proj_year_idx = 0;
 
       for (let i = 1920; i <= 2100; i++) {
         // build an array of labels
-        labels.push(i); // prepend 0s to historical range
+        labels.push(i); // prepend 0s to projected data
 
-        if (i < 2021) {
+        if (i < new Date().getFullYear()) {
           data_rcp45.push(0);
           data_rcp85.push(0);
         } else {
-          data_rcp45.push(projection[position].intLow);
-          data_rcp85.push(projection[position].intermediate);
-          position++;
+          data_rcp45.push(projection[proj_year_idx].intLow);
+          data_rcp85.push(projection[proj_year_idx].intermediate);
+          proj_year_idx++;
         }
       }
 
@@ -228,8 +226,8 @@
       let chart_historic_min = {
         type: "bar",
         x: labels,
-        y: data_hist.min,
-        name: "Minor",
+        y: data_hist,
+        name: "Historical inundation events",
         fill: "tonexty",
         yaxis: "y2",
         marker: {
@@ -239,7 +237,7 @@
             width: 1.5
           }
         },
-        hovertemplate: "Minor: <b>%{y}</b>",
+        hovertemplate: "Historical inundation events: <b>%{y}</b>",
         hoverlabel: {
           namelength: 0
         }
