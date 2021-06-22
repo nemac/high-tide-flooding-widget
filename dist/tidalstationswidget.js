@@ -80,10 +80,16 @@
         this.data = {};
         this.element = element;
         this.chart_element = null;
-        Object.assign(this.options, options);
-        this._when_data = fetch(this.options.data_url).then(a => a.json()).then(data => {
-          this.data = data;
-        });
+        this.hoverInfo = document.createElement("span");
+        this.hoverInfo.style.display = "none";
+        this.hoverThreshold = 0.10;
+        document.getElementsByTagName("body")[0].append(this.hoverInfo);
+        Object.assign(this.options, options); // this._when_data = fetch(this.options.data_url).then((a) => a.json()).then((data) => {
+        //     this.data = data
+        // });
+
+        this._cache = new Map();
+        this.request_update();
       }
       /**
        * Load JSON values into data field.
@@ -91,7 +97,11 @@
 
 
       async request_update(options = {}) {
-        await this._when_data;
+        // await this._when_data;
+        if (this.options.station || 'station' in options && options['station'] !== this.options.station) {
+          let station = 'station' in options ? options['station'] : this.options.station;
+          await this._fetch_station_data(station);
+        }
 
         if ('station' in options && options['station'] !== this.options.station) {
           this.options.station = options['station'];
@@ -103,7 +113,7 @@
               y_dtick: 75
             },
             historical: {
-              xrange: [1950, 2020],
+              xrange: [1950, new Date().getFullYear()],
               yrange: [0, 365],
               y_dtick: 5
             }
@@ -148,6 +158,20 @@
           height: height,
           filename: "high_tide_flooding_" + this.options.station + ".png"
         });
+      }
+
+      async _fetch_station_data(station) {
+        if (this._cache.has(station)) {
+          this.data = this._cache.get(station);
+        } else {
+          const [_historical, _projection] = await Promise.all([fetch(`https://api.tidesandcurrents.noaa.gov/dpapi/prod/webapi/htf/htf_annual.json?station=${station}`).then(res => res.json()), fetch(`https://api.tidesandcurrents.noaa.gov/dpapi/prod/webapi/htf/htf_projection_annual.json?station=${station}`).then(res => res.json())]);
+          this.data = {
+            floods_historical: _historical,
+            projection: _projection
+          };
+
+          this._cache.set(station, this.data);
+        }
       }
       /**
        * Update Plotly graph with updated values
