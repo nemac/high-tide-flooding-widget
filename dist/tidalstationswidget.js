@@ -154,56 +154,56 @@
        */
 
 
-    _update() {
-      if (!this.options.station) {
-        return;
-      } // transform data from object to array
+      _update() {
+        if (!this.options.station) {
+          return;
+        } // transform data from object to array
 
 
-      let data_hist = [];
-      let floods_historical = this.data.floods_historical.AnnualFloodCount;
+        let data_hist = [];
+        let floods_historical = this.data.floods_historical.AnnualFloodCount;
 
-      for (let i = 0; i < floods_historical.length; i++) {
-        data_hist.push(floods_historical[i].minCount);
-      }
-
-      this.scales.historical.yrange[1] = Math.max(...data_hist) * 2; // turn projected data values into an array
-
-      let labels = [];
-      let data_rcp45 = []; //int_low
-
-      let data_rcp85 = []; //int
-
-      let projection = this.data.projection.AnnualProjection;
-      let proj_year_idx = 0;
-
-      for (let i = 1920; i <= 2100; i++) {
-        // build an array of labels
-        labels.push(i); // prepend 0s to projected data
-
-        if (i < new Date().getFullYear()) {
-          data_rcp45.push(0);
-          data_rcp85.push(0);
-        } else {
-          data_rcp45.push(projection[proj_year_idx].intLow);
-          data_rcp85.push(projection[proj_year_idx].intermediate);
-          proj_year_idx++;
+        for (let i = 0; i < floods_historical.length; i++) {
+          data_hist.push(floods_historical[i].minCount);
         }
-      }
 
-      if (!this.element) {
-        return;
-      }
+        this.scales.historical.yrange[1] = Math.max(...data_hist) * 2; // turn projected data values into an array
 
-      this.chart_element = this.element.querySelector('.chart');
+        let labels = [];
+        let data_rcp45 = []; //int_low
 
-      if (!this.chart_element) {
-        this.chart_element = document.createElement("div");
-        this.chart_element.classList.add("chart");
-        this.element.appendChild(this.chart_element);
-      }
+        let data_rcp85 = []; //int
 
-        let chart_historic = {
+        let projection = this.data.projection.AnnualProjection;
+        let proj_year_idx = 0;
+
+        for (let i = 1920; i <= 2100; i++) {
+          // build an array of labels
+          labels.push(i); // prepend 0s to projected data
+
+          if (i < new Date().getFullYear()) {
+            data_rcp45.push(0);
+            data_rcp85.push(0);
+          } else {
+            data_rcp45.push(projection[proj_year_idx].intLow);
+            data_rcp85.push(projection[proj_year_idx].intermediate);
+            proj_year_idx++;
+          }
+        }
+
+        if (!this.element) {
+          return;
+        }
+
+        this.chart_element = this.element.querySelector('.chart');
+
+        if (!this.chart_element) {
+          this.chart_element = document.createElement("div");
+          this.chart_element.classList.add("chart");
+          this.element.appendChild(this.chart_element);
+        }
+
+        let chart_historic_min = {
           type: "bar",
           x: labels,
           y: data_hist,
@@ -254,7 +254,7 @@
             namelength: 0
           }
         };
-        let data = [chart_historic, chart_rcp45, chart_rcp85];
+        let data = [chart_historic_min, chart_rcp45, chart_rcp85];
         Plotly.react(this.chart_element, data, this.options.layout, this.options.config);
         this.chart_element.on('plotly_hover', data => {
           document.getElementsByClassName("hoverlayer")[0].style.display = "none";
@@ -295,7 +295,6 @@
           this.hoverInfo.innerHTML = outterText;
           this.hoverInfo.style.top = `${this.chart_element.offsetHeight / 1.5}px`;
           this.hoverInfo.style.left = `${xPosition}px`;
-          console.log("X: " + data.points[0].x, "Y: " + data.points[0].y, hoverInfoWidth, document.getElementsByTagName("body")[0].offsetWidth, tooFarRight);
         });
         this.chart_element.on('plotly_unhover', data => {
           this.hoverInfo.style.display = "none";
@@ -306,14 +305,14 @@
        */
 
 
-    async zoomToggle() {
-      return this.request_update({
-        scale: this.options.scale === 'historical' ? 'full' : 'historical'
-      });
+      async zoomToggle() {
+        return this.request_update({
+          scale: this.options.scale === 'historical' ? 'full' : 'historical'
+        });
+      }
+
     }
 
-  }
-
-  return TidalStationWidget;
+    return TidalStationWidget;
 
 })));
