@@ -84,10 +84,6 @@
         this._when_data = fetch(this.options.data_url).then(a => a.json()).then(data => {
           this.data = data;
         });
-        this.hoverInfo = document.createElement("span");
-        this.hoverInfo.style.display = "none";
-        this.hoverThreshold = 0.10;
-        document.getElementsByTagName("body")[0].append(this.hoverInfo);
       }
       /**
        * Load JSON values into data field.
@@ -158,55 +154,54 @@
        */
 
 
-      _update() {
-        if (!this.options.station) {
-          return;
-        } // transform data from object to array
+    _update() {
+      if (!this.options.station) {
+        return;
+      } // transform data from object to array
 
 
-        let data_hist = [];
+      let data_hist = [];
+      let floods_historical = this.data.floods_historical.AnnualFloodCount;
 
-        for (let i = 1950; i <= 2016; i++) {
-          try {
-            let flood_data = this.data.floods_historical[String(this.options.station)][i];
-            data_hist.push(typeof flood_data !== 'undefined' ? flood_data : 0);
-          } catch (e) {
-            if (e instanceof TypeError) {
-              data_hist.push(0);
-            }
-          }
+      for (let i = 0; i < floods_historical.length; i++) {
+        data_hist.push(floods_historical[i].minCount);
+      }
+
+      this.scales.historical.yrange[1] = Math.max(...data_hist) * 2; // turn projected data values into an array
+
+      let labels = [];
+      let data_rcp45 = []; //int_low
+
+      let data_rcp85 = []; //int
+
+      let projection = this.data.projection.AnnualProjection;
+      let proj_year_idx = 0;
+
+      for (let i = 1920; i <= 2100; i++) {
+        // build an array of labels
+        labels.push(i); // prepend 0s to projected data
+
+        if (i < new Date().getFullYear()) {
+          data_rcp45.push(0);
+          data_rcp85.push(0);
+        } else {
+          data_rcp45.push(projection[proj_year_idx].intLow);
+          data_rcp85.push(projection[proj_year_idx].intermediate);
+          proj_year_idx++;
         }
+      }
 
-        this.scales.historical.yrange[1] = Math.max(...data_hist) * 2; // turn projected data values into an array
+      if (!this.element) {
+        return;
+      }
 
-        let labels = [];
-        let data_rcp45 = [];
-        let data_rcp85 = [];
+      this.chart_element = this.element.querySelector('.chart');
 
-        for (let i = 1950; i <= 2100; i++) {
-          // build an array of labels
-          labels.push(i); // prepend 0s to historical range
-
-          if (i <= 2000) {
-            data_rcp45.push(0);
-            data_rcp85.push(0);
-          } else {
-            data_rcp45.push(this.data.int_low[String(this.options.station)][i]);
-            data_rcp85.push(this.data.int[String(this.options.station)][i]);
-          }
-        }
-
-        if (!this.element) {
-          return;
-        }
-
-        this.chart_element = this.element.querySelector('.chart');
-
-        if (!this.chart_element) {
-          this.chart_element = document.createElement("div");
-          this.chart_element.classList.add("chart");
-          this.element.appendChild(this.chart_element);
-        }
+      if (!this.chart_element) {
+        this.chart_element = document.createElement("div");
+        this.chart_element.classList.add("chart");
+        this.element.appendChild(this.chart_element);
+      }
 
         let chart_historic = {
           type: "bar",
@@ -311,14 +306,14 @@
        */
 
 
-      async zoomToggle() {
-        return this.request_update({
-          scale: this.options.scale === 'historical' ? 'full' : 'historical'
-        });
-      }
-
+    async zoomToggle() {
+      return this.request_update({
+        scale: this.options.scale === 'historical' ? 'full' : 'historical'
+      });
     }
 
-    return TidalStationWidget;
+  }
+
+  return TidalStationWidget;
 
 })));
