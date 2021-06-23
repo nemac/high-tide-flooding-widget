@@ -80,10 +80,11 @@
         this.data = {};
         this.element = element;
         this.chart_element = null;
-        this.hoverInfo = document.createElement("span");
-        this.hoverInfo.style.display = "none";
-        this.hoverThreshold = 0.10;
-        document.getElementsByTagName("body")[0].append(this.hoverInfo);
+        this.hover_info = document.createElement("span");
+        this.hover_info.style.display = "none";
+        this.hover_info.id = (this.element.id || "") + "-widget-hover-info";
+        this.hover_threshold = 0.50;
+        document.body.append(this.hover_info);
         Object.assign(this.options, options); // this._when_data = fetch(this.options.data_url).then((a) => a.json()).then((data) => {
         //     this.data = data
         // });
@@ -206,8 +207,8 @@
           labels.push(i); // prepend 0s to projected data
 
           if (i < new Date().getFullYear()) {
-            data_rcp45.push(0);
-            data_rcp85.push(0);
+            data_rcp45.push(Number.NaN);
+            data_rcp85.push(Number.NaN);
           } else {
             data_rcp45.push(projection[proj_year_idx].intLow);
             data_rcp85.push(projection[proj_year_idx].intermediate);
@@ -281,47 +282,54 @@
         let data = [chart_historic_min, chart_rcp45, chart_rcp85];
         Plotly.react(this.chart_element, data, this.options.layout, this.options.config);
         this.chart_element.on('plotly_hover', data => {
-          document.getElementsByClassName("hoverlayer")[0].style.display = "none";
-          this.hoverInfo.style.display = "block";
-          this.hoverInfo.style.position = "absolute";
-          let innerText = `
+          try {
+            this.element.querySelector(".hoverlayer").style.display = "none";
+            this.hover_info.style.display = "block";
+            this.hover_info.style.position = "absolute";
+            let inner_text = `
                     <div>
                         <span>Year ${data.points[0].x}</span>                    
                     </div>`;
 
-          for (let i = 0; i < data.points.length; i++) {
-            let point = data.points[i];
-            let color = '';
+            for (let i = 0; i < data.points.length; i++) {
+              let point = data.points[i];
+              let color = '';
 
-            if (point.data.type === 'bar') {
-              color = point.data.marker.color;
-            } else if (point.data.mode === 'lines') {
-              color = point.fullData.line.color;
-            }
+              if (point.data.type === 'bar') {
+                color = point.data.marker.color;
+              } else if (point.data.mode === 'lines') {
+                color = point.fullData.line.color;
+              }
 
-            innerText += `
+              inner_text += `
                     <div style="display: flex; flex-direction: row; justify-content: space-between; border: 1px solid ${color}; border-radius: 2px; margin-bottom: 5px;">
                         <span style="padding-left: 3px; padding-right: 3px;">${point.data.name}: </span>
                         <span style="padding-left: 3px; padding-right: 3px; font-weight: bold;">${point.y}</span>
                     </div>
                 `;
+            }
+
+            let outer_text = '<div style="background-color: rgba(255, 255, 255, 0.75); padding: 5px; border: 1px solid black; border-radius: 2px">' + inner_text + '</div>'; // let hover_info_width = this.hover_info.offsetWidth + data.event.pageX - (this.hover_info.offsetWidth + 30);
+            // let too_far_right = hover_info_width > document.body.offsetWidth;
+
+            let too_far_right = this.element.offsetWidth - data.event.pageX - this.hover_info.offsetWidth - 20 < 0; // console.log(hover_info_width, document.body.offsetWidth);
+
+            let x_position = data.event.pageX + 15;
+
+            if (too_far_right) {
+              x_position = data.event.pageX - this.hover_info.offsetWidth - 30;
+            }
+
+            this.hover_info.innerHTML = outer_text;
+            this.hover_info.style.top = `${this.chart_element.offsetHeight / 1.5}px`;
+            this.hover_info.style.left = `${x_position}px`;
+          } catch (e) {
+            this.hover_info.style.display = "none";
+            console.log(e);
           }
-
-          let outterText = '<div style="background-color: rgba(255, 255, 255, 0.75); padding: 5px; border: 1px solid black; border-radius: 2px">' + innerText + '</div>';
-          let hoverInfoWidth = this.hoverInfo.offsetWidth + data.event.pageX - this.hoverInfo.offsetWidth * this.hoverThreshold;
-          let tooFarRight = hoverInfoWidth > document.getElementsByTagName("body")[0].offsetWidth;
-          let xPosition = data.event.pageX + 15;
-
-          if (tooFarRight) {
-            xPosition = data.event.pageX - this.hoverInfo.offsetWidth - 30;
-          }
-
-          this.hoverInfo.innerHTML = outterText;
-          this.hoverInfo.style.top = `${this.chart_element.offsetHeight / 1.5}px`;
-          this.hoverInfo.style.left = `${xPosition}px`;
         });
         this.chart_element.on('plotly_unhover', data => {
-          this.hoverInfo.style.display = "none";
+          this.hover_info.style.display = "none";
         });
       }
       /**
