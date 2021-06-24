@@ -70,7 +70,6 @@ export default class TidalStationWidget {
         this.hover_info = document.createElement("span");
         this.hover_info.style.display = "none";
         this.hover_info.id = (this.element.id || "") + "-widget-hover-info";
-        this.hover_threshold = 0.50;
         document.body.append(this.hover_info);
 
         Object.assign(this.options, options);
@@ -278,7 +277,6 @@ export default class TidalStationWidget {
         
         this.chart_element.on('plotly_hover', (data) => {
 
-
             try {
                 this.element.querySelector(".hoverlayer").style.display = "none";
 
@@ -287,7 +285,7 @@ export default class TidalStationWidget {
 
                 let inner_text = `
                     <div>
-                        <span>Year ${data.points[0].x}</span>                    
+                        <span>${data.points[0].x}</span>                    
                     </div>`;
 
 
@@ -332,9 +330,6 @@ export default class TidalStationWidget {
                 this.hover_info.style.display = "none";
                 console.log(e);
             }
-
-
-
         })
 
         this.chart_element.on('plotly_unhover', (data) => {

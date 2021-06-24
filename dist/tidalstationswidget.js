@@ -288,7 +288,7 @@
             this.hover_info.style.position = "absolute";
             let inner_text = `
                     <div>
-                        <span>Year ${data.points[0].x}</span>                    
+                        <span>${data.points[0].x}</span>                    
                     </div>`;
 
             for (let i = 0; i < data.points.length; i++) {
