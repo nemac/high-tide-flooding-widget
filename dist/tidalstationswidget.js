@@ -83,8 +83,8 @@
         this.hover_info = document.createElement("span");
         this.hover_info.style.display = "none";
         this.hover_info.id = (this.element.id || "") + "-widget-hover-info";
-        this.hover_threshold = 0.50;
         document.body.append(this.hover_info);
+        this.vertical_line = null;
         Object.assign(this.options, options); // this._when_data = fetch(this.options.data_url).then((a) => a.json()).then((data) => {
         //     this.data = data
         // });
@@ -284,6 +284,11 @@
         this.chart_element.on('plotly_hover', data => {
           try {
             this.element.querySelector(".hoverlayer").style.display = "none";
+
+            if (this.vertical_line != null) {
+              this.vertical_line.attr("visibility", "hidden");
+            }
+
             this.hover_info.style.display = "block";
             this.hover_info.style.position = "absolute";
             let inner_text = `
@@ -309,15 +314,25 @@
                 `;
             }
 
-            let outer_text = '<div style="background-color: rgba(255, 255, 255, 0.75); padding: 5px; border: 1px solid black; border-radius: 2px">' + inner_text + '</div>'; // let hover_info_width = this.hover_info.offsetWidth + data.event.pageX - (this.hover_info.offsetWidth + 30);
-            // let too_far_right = hover_info_width > document.body.offsetWidth;
-
-            let too_far_right = this.element.offsetWidth - data.event.pageX - this.hover_info.offsetWidth - 20 < 0; // console.log(hover_info_width, document.body.offsetWidth);
-
+            let outer_text = '<div style="background-color: rgba(255, 255, 255, 0.75); padding: 5px; border: 1px solid black; border-radius: 2px">' + inner_text + '</div>';
+            let too_far_right = this.element.offsetWidth - data.event.pageX - this.hover_info.offsetWidth - 20 < 0;
             let x_position = data.event.pageX + 15;
 
             if (too_far_right) {
               x_position = data.event.pageX - this.hover_info.offsetWidth - 30;
+            } // Convert the x-axis value to a pixel position on the graph
+
+
+            let vertical_x_pos = data.points[0].xaxis.c2p(Math.round(data.xvals[0])); // height of line
+
+            let vertical_height = this.element.querySelector(".scatterlayer").getBoundingClientRect().bottom - this.element.querySelector(".scatterlayer").getBoundingClientRect().top;
+            console.log(data.points[0].x, vertical_x_pos);
+            console.log(data);
+
+            if (this.vertical_line == null) {
+              this.vertical_line = Plotly.d3.select(".scatterlayer").append("path").attr("d", "M " + vertical_x_pos + " " + vertical_height + " V 1").attr("stroke", "black").attr("stroke-width", "1px").attr("class", "vertical-line").attr("stroke-opacity", "1");
+            } else {
+              this.vertical_line.attr("d", "M " + vertical_x_pos + " " + vertical_height + " V 1").attr("visibility", "visible");
             }
 
             this.hover_info.innerHTML = outer_text;
@@ -330,6 +345,10 @@
         });
         this.chart_element.on('plotly_unhover', data => {
           this.hover_info.style.display = "none";
+
+          if (this.vertical_line != null) {
+            this.vertical_line.attr("visibility", "hidden");
+          }
         });
       }
       /**
