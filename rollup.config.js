@@ -18,7 +18,7 @@ export default [{
   output: {
     file: 'dist/tidalstationswidget.js',
     format: 'umd',
-    name: 'TidalStationsWidget',
+    name: 'TidalStationWidget',
     sourcemap: !production ? 'inline' : false,
   },
   plugins: plugins
