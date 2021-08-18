@@ -445,6 +445,7 @@ export default class {
 
 
     ];
+    this.element.addEventListener('mouseleave', () => this.request_hide_popover(false));
     this._popover = document.createElement("span");
     this._popover.classList.add('high_tide_flooding_popover');
     this.element.append(this._popover);
