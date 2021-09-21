@@ -2490,18 +2490,28 @@
         <div class="label1">${year} projection</div>
           <div class="bg-rcp85 label2" >Higher Emissions</div>
           <div class="bg-rcp85" style="grid-column: 1 / span 2; padding-bottom: 0.25rem;">
-            <div title="${year} higher emissions weighted mean" class="legend-line" style="font-size: 1.1rem; border-left-color:${rgba(colors.rcp85.line, colors.opacity.proj_line)}; ">${round(chart_data['rcp85'][proj_year_idx], precision)}</div>
+            <div style="display: flex; align-items: center; width: 50%;">
+              <hr style="width: 15%; margin: 0 .3rem 0 .3rem; border-top: 0.15rem solid ${rgba(colors.rcp85.line, colors.opacity.proj_line)};">
+              <div title="${year} higher emissions weighted mean" class="legend-line" style="font-size: 1.1rem; width: 85%; margin: 0 0 0 .3rem;">${round(chart_data['rcp85'][proj_year_idx], precision)}</div>
+            </div>
+
           </div>
          
           <div class="bg-rcp45 label2" >Lower Emissions</div>
           <div class="bg-rcp45" style="grid-column: 1 / span 2;  padding-bottom: 0.25rem;">
-            <div title="${year} lower emissions weighted mean"  class="legend-line"  style="font-size: 1.1rem; border-left-color:${rgba(colors.rcp45.line, colors.opacity.proj_line)};  ">${round(chart_data['rcp45'][proj_year_idx], precision)}</div>
+            <div style="display: flex; align-items: center; width: 50%;"> 
+              <hr style="width: 15%; margin: 0 .3rem 0 .3rem; border-top: 0.15rem solid ${rgba(colors.rcp45.line, colors.opacity.proj_line)};">
+              <div title="${year} lower emissions weighted mean"  class="legend-line"  style="font-size: 1.1rem; width: 85%; margin: 0 0 0 .3rem;">${round(chart_data['rcp45'][proj_year_idx], precision)}</div>
+            </div>
           </div>
          
         ` : `
         <div  class="label1" style="font-size: 0.8rem;">${year} observed</div>
           <div style="grid-column: 1 / span 2;">
-            <div title="${year} observed" class="legend-line" style="border-left-color: ${rgba(colors.hist.bar, 0.75)};  ">${round(chart_data['hist'][year - 1920], precision)}</div>
+            <div style="display: flex; align-items: center; width: 50%;"> 
+              <hr style="width: 15%; margin: 0 .3rem 0 .3rem; border-top: 0.15rem solid ${rgba(colors.hist.bar, 0.75)};">
+              <div title="${year} observed" class="legend-line" style="font-size: 1.1rem; width: 85%; margin: 0 0 0 .3rem;">${round(chart_data['hist'][year - 1920], precision)}</div>
+            </div>
           </div>
         `}
         </div>
@@ -2529,7 +2539,8 @@
             font-size: 1rem;
             font-weight: 500;
             line-height: 1.5rem;
-       }`, `#${this.element.id} .high_tide_flooding_popover .bg-rcp85 { background-color: ${rgba(this.options.colors.rcp85.outerBand, 0.1)}; }`, `#${this.element.id} .high_tide_flooding_popover .bg-rcp45 { background-color: ${rgba(this.options.colors.rcp45.outerBand, 0.1)}; }`, `#${this.element.id} .high_tide_flooding_popover .label1 { font-size: 1rem; font-weight: 700; line-height: 1.5rem; grid-column: 1 / span 2; }`, `#${this.element.id} .high_tide_flooding_popover .label2 { font-size: 0.7rem; padding-left: 0.3rem; line-height: 1rem; grid-column: 1 / span 2; }`, `#${this.element.id} .high_tide_flooding_popover .legend-line { margin-left: 0.5rem; border-left-width: 0.15rem; border-left-style: solid; padding-left: 0.5rem; }`, `#${this.element.id} .high_tide_flooding_popover .popover-header { display: flex; flex-flow: row nowrap; align-items: center;}`, `#${this.element.id}.popover-pinned .high_tide_flooding_popover { pointer-events: all; background: rgba(252,253,255,0.95); left: 60px !important; top: 15px !important; }`, `#${this.element.id}.popover-open .high_tide_flooding_popover { display: flex;   }`];
+       }`, `#${this.element.id} .high_tide_flooding_popover .bg-rcp85 { background-color: ${rgba(this.options.colors.rcp85.outerBand, 0.1)}; }`, `#${this.element.id} .high_tide_flooding_popover .bg-rcp45 { background-color: ${rgba(this.options.colors.rcp45.outerBand, 0.1)}; }`, `#${this.element.id} .high_tide_flooding_popover .label1 { font-size: 1rem; font-weight: 700; line-height: 1.5rem; grid-column: 1 / span 2; }`, `#${this.element.id} .high_tide_flooding_popover .label2 { font-size: 0.7rem; padding-left: 0.3rem; line-height: 1rem; grid-column: 1 / span 2; }`, // `#${this.element.id} .high_tide_flooding_popover .legend-line { margin-left: 0.5rem; border-left-width: 0.15rem; border-left-style: solid; padding-left: 0.5rem; }`,
+      `#${this.element.id} .high_tide_flooding_popover .popover-header { display: flex; flex-flow: row nowrap; align-items: center;}`, `#${this.element.id}.popover-pinned .high_tide_flooding_popover { pointer-events: all; background: rgba(252,253,255,0.95); left: 60px !important; top: 15px !important; }`, `#${this.element.id}.popover-open .high_tide_flooding_popover { display: flex;   }`];
       this.element.addEventListener('mouseleave', () => this.request_hide_popover(false));
       this._popover = document.createElement("span");
 
