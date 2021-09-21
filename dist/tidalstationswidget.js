@@ -2490,27 +2490,27 @@
         <div class="label1">${year} projection</div>
           <div class="bg-rcp85 label2" >Higher Emissions</div>
           <div class="bg-rcp85" style="grid-column: 1 / span 2; padding-bottom: 0.25rem;">
-            <div style="display: flex; align-items: center; width: 50%;">
-              <hr style="width: 25%; margin: 0 .3rem 0 .3rem; border-top: 0.15rem solid ${rgba(colors.rcp85.line, colors.opacity.proj_line)};">
-              <div title="${year} higher emissions weighted mean" class="legend-line" style="font-size: 1.1rem; width: 75%; margin: 0 0 0 .3rem;">${round(chart_data['rcp85'][proj_year_idx], precision)}</div>
+            <div style="display: flex; align-items: center;">
+              <span style="margin: 0 .3rem 0 .3rem; width: 1.25rem; border-top: 0.15rem solid ${rgba(colors.rcp85.line, colors.opacity.proj_line)};"></span>
+              <div title="${year} higher emissions weighted mean" class="legend-line" style="font-size: 1.1rem; margin: 0 0 0 .3rem;">${round(chart_data['rcp85'][proj_year_idx], precision)}</div>
             </div>
 
           </div>
          
           <div class="bg-rcp45 label2" >Lower Emissions</div>
           <div class="bg-rcp45" style="grid-column: 1 / span 2;  padding-bottom: 0.25rem;">
-            <div style="display: flex; align-items: center; width: 50%;"> 
-              <hr style="width: 25%; margin: 0 .3rem 0 .3rem; border-top: 0.15rem solid ${rgba(colors.rcp45.line, colors.opacity.proj_line)};">
-              <div title="${year} lower emissions weighted mean"  class="legend-line"  style="font-size: 1.1rem; width: 75%; margin: 0 0 0 .3rem;">${round(chart_data['rcp45'][proj_year_idx], precision)}</div>
+            <div style="display: flex; align-items: center;"> 
+              <span style="margin: 0 .3rem 0 .3rem; width: 1.25rem; border-top: 0.15rem solid ${rgba(colors.rcp45.line, colors.opacity.proj_line)};"></span>
+              <div title="${year} lower emissions weighted mean"  class="legend-line" style="font-size: 1.1rem; margin: 0 0 0 .3rem;">${round(chart_data['rcp45'][proj_year_idx], precision)}</div>
             </div>
           </div>
          
         ` : `
         <div  class="label1" style="font-size: 0.8rem;">${year} observed</div>
           <div style="grid-column: 1 / span 2;">
-            <div style="display: flex; align-items: center; width: 50%;"> 
-              <hr style="width: 25%; margin: 0 .3rem 0 .3rem; border-top: 0.15rem solid ${rgba(colors.hist.bar, 0.75)};">
-              <div title="${year} observed" class="legend-line" style="font-size: 1.1rem; width: 75%; margin: 0 0 0 .3rem;">${round(chart_data['hist'][year - 1920], precision)}</div>
+            <div style="display: flex; align-items: center;"> 
+              <span style="width: 25%; margin: 0 .3rem 0 .3rem; width: 1.25rem; border-top: 0.15rem solid ${rgba(colors.hist.bar, 0.75)};"></span>
+              <div title="${year} observed" class="legend-line" style="font-size: 1.1rem; margin: 0 0 0 .3rem;">${round(chart_data['hist'][year - 1920], precision)}</div>
             </div>
           </div>
         `}
