@@ -1,5 +1,5 @@
 
-import { partial,  round} from "./node_modules/lodash-es/lodash.js";
+import { partial,  round,  cloneDeep} from "./node_modules/lodash-es/lodash.js";
 
 export default class {
   constructor(element, options = {}) {
@@ -156,12 +156,38 @@ export default class {
 
     let {width, height} = window.getComputedStyle(this.element);
 
-    width = Number.parseFloat(width) * 1.2;
-    height = Number.parseFloat(height) * 1.2;
+    width = 1440;
+    height = 720;
+    const old_layout= cloneDeep(this.options.layout);
+    old_layout.title = ""
+    const temp_layout = cloneDeep(this.options.layout);
+    //
+    temp_layout.title = cloneDeep(temp_layout.yaxis.title)
+    temp_layout.title.x = 0.015;
+    temp_layout.yaxis.title.text = "";
+    temp_layout.margin = {
+        l: 50,
+        t: 30,
+        r: 50,
+        b: 2
+    }
+    // legend padding/margin
+    // legend font-size?
+    // nticks?
 
-    return Plotly.downloadImage(this.chart_element, {
+    // temp_layout.yaxis2.title.font.size = 18;
+    // temp_layout.xaxis3.title.font.size = 18;
+    //
+    //
+    //
+    await Plotly.relayout(this.chart_element, temp_layout);
+    const result = Plotly.downloadImage(this.chart_element, {
       format: 'png', width: width, height: height, filename: "high_tide_flooding_" + this.options.station + ".png"
-    });
+    })
+    await result
+    await Plotly.relayout(this.chart_element, old_layout);
+    return result
+    ;
 
 
   }
