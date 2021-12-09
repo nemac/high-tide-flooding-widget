@@ -3936,7 +3936,7 @@
             range: [1950, 2100]
           },
           yaxis: {
-            // tickmode: "linear",
+            tickmode: "linear",
             tick0: 0,
             dtick: 50,
             ticks: "outside",
@@ -3952,7 +3952,9 @@
             range: [0, 365]
           },
           legend: {
-            "orientation": "h"
+            "orientation": "h",
+            x: 0,
+            y: -0.08
           },
           hovermode: 'x unified',
           hoverdistance: 30,
@@ -3992,11 +3994,19 @@
         },
         font: null
       };
+      this.options.layout.title = {
+        text: "",
+        font: {
+          // family: (!this.options.font || this.options.font === null) ? "Roboto" : this.options.font,
+          size: 20,
+          color: '#124086'
+        }
+      };
       this.scales = {
         full: {
           xrange: [1950, 2100],
           yrange: [0, 365],
-          y_dtick: 75
+          y_dtick: 50
         },
         historical: {
           xrange: [1950, 2020],
@@ -4041,7 +4051,7 @@
           full: {
             xrange: [1950, 2100],
             yrange: [0, 365],
-            y_dtick: 75
+            y_dtick: 50
           },
           historical: {
             xrange: [1950, new Date().getFullYear()],
@@ -4076,6 +4086,7 @@
     }
 
     async request_download_image() {
+      //https://github.com/plotly/plotly.js/issues/4885 images not keeping set font.
       if (this.chart_element == null) return;
       let {
         width,
@@ -4087,10 +4098,12 @@
       old_layout.title = "";
       const temp_layout = cloneDeep(this.options.layout);
       temp_layout.title = cloneDeep(temp_layout.yaxis.title);
+      temp_layout.title.text = `<b>${temp_layout.title.text}</b>`;
       temp_layout.title.x = 0.015;
       temp_layout.title.font = {
-        family: this.options.font === null ? 'Roboto' : this.options.font,
-        size: 20
+        // family: this.options.font === null ? "Roboto" : this.options.font,
+        size: 18,
+        color: '#124086'
       };
       temp_layout.yaxis.title.text = "";
       temp_layout.margin = {
@@ -4098,15 +4111,7 @@
         t: 50,
         r: 50,
         b: 2
-      }; // legend padding/margin
-      // legend font-size?
-      // nticks?
-      // temp_layout.yaxis2.title.font.size = 18;
-      // temp_layout.xaxis3.title.font.size = 18;
-      //
-      //
-      //
-
+      };
       await Plotly.relayout(this.chart_element, temp_layout);
       const result = Plotly.downloadImage(this.chart_element, {
         format: 'png',
