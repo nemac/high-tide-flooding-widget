@@ -83,7 +83,7 @@ export default class {
     this.options.layout.title = {
       text: "",
         font: {
-            family: (!this.options.font || this.options.font === null) ? "Roboto" : this.options.font,
+            // family: (!this.options.font || this.options.font === null) ? "Roboto" : this.options.font,
             size: 20,
             color: '#124086'
       }
@@ -182,7 +182,7 @@ export default class {
     temp_layout.title.text = `<b>${temp_layout.title.text}</b>`
     temp_layout.title.x = 0.015;
     temp_layout.title.font = {
-      family: this.options.font === null ? "Roboto" : this.options.font,
+      // family: this.options.font === null ? "Roboto" : this.options.font,
       size: 18,
       color: '#124086'
     }
