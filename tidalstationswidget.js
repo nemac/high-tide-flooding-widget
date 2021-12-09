@@ -1,5 +1,5 @@
 
-import { partial,  round} from "./node_modules/lodash-es/lodash.js";
+import { partial,  round,  cloneDeep} from "./node_modules/lodash-es/lodash.js";
 
 export default class {
   constructor(element, options = {}) {
@@ -32,7 +32,7 @@ export default class {
         yaxis: {
           tickmode: "linear",
           tick0: 0,
-          dtick: 75,
+          dtick: 50,
           ticks: "outside",
           side: "left",
           linecolor: 'rgb(0,0,0)',
@@ -46,7 +46,9 @@ export default class {
           range: [0, 365]
         },
         legend: {
-          "orientation": "h"
+          "orientation": "h",
+          x: 0,
+          y: -0.08,
         },
         hovermode: 'x unified',
         hoverdistance: 30,
@@ -74,10 +76,21 @@ export default class {
           hist_obs: 1,
           proj_line: 1,
         }
-      }
+      },
+      font: null
     };
+
+    this.options.layout.title = {
+      text: "",
+        font: {
+            // family: (!this.options.font || this.options.font === null) ? "Roboto" : this.options.font,
+            size: 20,
+            color: '#124086'
+      }
+    }
+
     this.scales = {
-      full: {xrange: [1950, 2100], yrange: [0, 365], y_dtick: 75},
+      full: {xrange: [1950, 2100], yrange: [0, 365], y_dtick: 50},
       historical: {xrange: [1950, 2020], yrange: [0, 365], y_dtick: 5}
     };
     this.data = {};
@@ -120,7 +133,7 @@ export default class {
       this.options.station = options['station'];
       this.options.scale = 'full';
       this.scales = {
-        full: {xrange: [1950, 2100], yrange: [0, 365], y_dtick: 75},
+        full: {xrange: [1950, 2100], yrange: [0, 365], y_dtick: 50},
         historical: {xrange: [1950, new Date().getFullYear()], yrange: [0, 365], y_dtick: 5}
       };
 
@@ -152,18 +165,44 @@ export default class {
 
   async request_download_image() {
 
+    //https://github.com/plotly/plotly.js/issues/4885 images not keeping set font.
+
     if (this.chart_element == null) return;
 
     let {width, height} = window.getComputedStyle(this.element);
 
-    width = Number.parseFloat(width) * 1.2;
-    height = Number.parseFloat(height) * 1.2;
+    width = 1440;
+    height = 720;
+    const old_layout= cloneDeep(this.options.layout);
+    old_layout.title = ""
 
-    return Plotly.downloadImage(this.chart_element, {
+    const temp_layout = cloneDeep(this.options.layout);
+
+    temp_layout.title = cloneDeep(temp_layout.yaxis.title)
+    temp_layout.title.text = `<b>${temp_layout.title.text}</b>`
+    temp_layout.title.x = 0.015;
+    temp_layout.title.font = {
+      // family: this.options.font === null ? "Roboto" : this.options.font,
+      size: 18,
+      color: '#124086'
+    }
+    temp_layout.yaxis.title.text = "";
+    temp_layout.margin = {
+        l: 50,
+        t: 50,
+        r: 50,
+        b: 2
+    }
+
+    await Plotly.relayout(this.chart_element, temp_layout);
+    const result = Plotly.downloadImage(this.chart_element, {
       format: 'png', width: width, height: height, filename: "high_tide_flooding_" + this.options.station + ".png"
-    });
+    })
 
+    await result
+    await Plotly.relayout(this.chart_element, old_layout);
 
+    return result;
   }
 
   async _fetch_station_data(station) {
