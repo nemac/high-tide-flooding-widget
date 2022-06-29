@@ -2,9 +2,6 @@ import { partial,  round,  cloneDeep} from "./node_modules/lodash-es/lodash.js";
 
 export default class {
   constructor(element, options = {}) {
-    this.master_data = null;
-
-    this.fetch_master_data();
 
     this.options = {
       isCE: false,
@@ -97,6 +94,10 @@ export default class {
       full: {xrange: [1950, 2100], yrange: [0, 365], y_dtick: 50},
       historical: {xrange: [1950, 2020], yrange: [0, 365], y_dtick: 5}
     };
+
+    this.master_data = null;
+    this.fetch_master_data();
+
     this.data = {};
     this.element = element;
     this.chart_element = null;
