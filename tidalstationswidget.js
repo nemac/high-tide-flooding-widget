@@ -7,6 +7,7 @@ export default class {
     this.fetch_master_data();
 
     this.options = {
+      isCE: false,
       responsive: true,
       station: '',
       data_url: 'tidal_data.json',
@@ -219,9 +220,11 @@ export default class {
       return;
     }
 
+
+
     const [_historical, _projection] = await Promise.all([
-      fetch(`./htf_annual.json`).then(res => res.json()),
-      fetch(`./htf_projection_annual.json`).then(res => res.json())]);
+      fetch(this.options.isCE ? `../vendor/htf_annual.json` : `./htf_annual.json`).then(res => res.json()),
+      fetch(this.options.isCE ? `../vendor/htf_projection_annual.json` : `./htf_projection_annual.json`).then(res => res.json())]);
 
     this.master_data = {
       floods_historical: _historical,
