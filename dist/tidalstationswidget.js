@@ -3909,6 +3909,8 @@
 
   class tidalstationswidget {
     constructor(element, options = {}) {
+      this.master_data = null;
+      this.fetch_master_data();
       this.options = {
         responsive: true,
         station: '',
@@ -4088,12 +4090,8 @@
     async request_download_image() {
       //https://github.com/plotly/plotly.js/issues/4885 images not keeping set font.
       if (this.chart_element == null) return;
-      let {
-        width,
-        height
-      } = window.getComputedStyle(this.element);
-      width = 1440;
-      height = 720;
+      const width = 1440;
+      const height = 720;
       const old_layout = cloneDeep(this.options.layout);
       old_layout.title = "";
       const temp_layout = cloneDeep(this.options.layout);
@@ -4124,14 +4122,46 @@
       return result;
     }
 
+    async fetch_master_data() {
+      if (this.master_data !== null) {
+        console.log({
+          floods_historical: this.master_data.floods_historical.AnnualFloodCount.filter(annual_flood => annual_flood.stnId === '1611400'),
+          projection: this.master_data.projection.AnnualProjection.filter(proj => proj.stnId === '1611400')
+        });
+        return;
+      }
+
+      const [_historical, _projection] = await Promise.all([fetch(`./htf_annual.json`).then(res => res.json()), fetch(`./htf_projection_annual.json`).then(res => res.json())]);
+      this.master_data = {
+        floods_historical: _historical,
+        projection: _projection
+      };
+      console.log({
+        floods_historical: this.master_data.floods_historical.AnnualFloodCount.filter(annual_flood => annual_flood.stnId === '1611400'),
+        projection: this.master_data.projection.AnnualProjection.filter(proj => proj.stnId === '1611400')
+      });
+    }
+
     async _fetch_station_data(station) {
+      if (this.master_data === null) {
+        await this.fetch_master_data();
+      }
+
       if (this._cache.has(station)) {
         this.data = this._cache.get(station);
       } else {
-        const [_historical, _projection] = await Promise.all([fetch(`https://api.tidesandcurrents.noaa.gov/dpapi/prod/webapi/htf/htf_annual.json?station=${station}`).then(res => res.json()), fetch(`https://api.tidesandcurrents.noaa.gov/dpapi/prod/webapi/htf/htf_projection_annual.json?station=${station}`).then(res => res.json())]);
+        /*
+        const [_historical, _projection] = await Promise.all([
+          fetch(`https://api.tidesandcurrents.noaa.gov/dpapi/prod/webapi/htf/htf_annual.json?station=${station}`).then(res => res.json()),
+          fetch(`https://api.tidesandcurrents.noaa.gov/dpapi/prod/webapi/htf/htf_projection_annual.json?station=${station}`).then(res => res.json())]);
+        */
         this.data = {
-          floods_historical: _historical,
-          projection: _projection
+          floods_historical: {
+            AnnualFloodCount: this.master_data.floods_historical.AnnualFloodCount.filter(annual_flood => annual_flood.stnId === station)
+          },
+          projection: {
+            AnnualProjection: this.master_data.projection.AnnualProjection.filter(proj => proj.stnId === station)
+          }
         };
 
         this._cache.set(station, this.data);
@@ -4165,11 +4195,13 @@
       let projection = this.data.projection.AnnualProjection;
       let proj_year_idx = 0;
 
+      const _date = new Date();
+
       for (let i = 1920; i <= 2100; i++) {
         // build an array of labels
         years.push(i.toString() + '-01-01'); // prepend 0s to projected data
 
-        if (i < new Date().getFullYear()) {
+        if (i < _date.getFullYear()) {
           data_rcp45.push(Number.NaN);
           data_rcp85.push(Number.NaN);
         } else {
@@ -4368,7 +4400,7 @@
           <div class="bg-rcp45 label2" >Lower Emissions</div>
           <div class="bg-rcp45" style="grid-column: 1 / span 2;  padding-bottom: 0.25rem;">
             <div style="display: flex; align-items: center;"> 
-              <span style="margin: 0 .3rem 0 .3rem; width: 1.25rem; border-top: 0.15rem solid ${rgba(colors.rcp45.line, colors.opacity.proj_line)};"></span>
+              <span style="margin: 0 .3rem 0 .3rem; width: 1.25rem; border-top: 0.15rem solid ${rgba(colors.rcp45.line, colors.opacity.proj_line)}"></span>
               <div title="${year} lower emissions weighted mean"  class="legend-line" style="font-size: 1.1rem; margin: 0 0 0 .3rem;">${round(chart_data['rcp45'][proj_year_idx], precision)}</div>
             </div>
           </div>

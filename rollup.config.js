@@ -1,9 +1,12 @@
 // rollup.config.js
 import babel from '@rollup/plugin-babel';
 import nodeResolve from '@rollup/plugin-node-resolve';
+import jsonPlugin from '@rollup/plugin-json';
+
 let production = process.env.build_env === 'prod' || process.env.build_env === 'production'
 const plugins = [
-  nodeResolve(),
+    nodeResolve(),
+    jsonPlugin()
 ];
 if (production){
   plugins.push(

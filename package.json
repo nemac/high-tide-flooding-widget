@@ -32,5 +32,8 @@
   "bugs": {
     "url": "https://github.com/nemac/high-tide-flooding-widget/issues"
   },
-  "homepage": "https://github.com/nemac/high-tide-flooding-widget#readme"
+  "homepage": "https://github.com/nemac/high-tide-flooding-widget#readme",
+  "dependencies": {
+    "@rollup/plugin-json": "^4.1.0"
+  }
 }
