@@ -4252,7 +4252,9 @@
         hoverlabel: {
           namelength: 0
         }
-      };
+      }; // The darker outline of the filled in area will not show up, because we have NaN values between the decade year and the following years.
+      // ex: 2020, NaN ..., NaN, 2030, NaN, ...
+
       let chart_rcp45 = {
         x: years,
         y: data_rcp45,
