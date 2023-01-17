@@ -213,18 +213,15 @@ export default class {
   async fetch_master_data() {
 
     if(this.master_data !== null) {
-
-      console.log({
-        floods_historical: this.master_data.floods_historical.AnnualFloodCount.filter(annual_flood => annual_flood.stnId === '1611400'),
-        projection: this.master_data.projection.AnnualProjection.filter(proj => proj.stnId === '1611400')
-      });
       return;
     }
 
-
+    /*const [_historical, _projection] = await Promise.all([
+      fetch(this.options.isCE ? `../vendor/htf_annual.json` : `./htf_annual.json`).then(res => res.json()),
+      fetch(this.options.isCE ? `../vendor/htf_projection_annual.json` : `./htf_projection_annual.json`).then(res => res.json())]);*/
 
     const [_historical, _projection] = await Promise.all([
-      fetch(this.options.isCE ? `../vendor/htf_annual.json` : `./htf_annual.json`).then(res => res.json()),
+      fetch('https://api.tidesandcurrents.noaa.gov/dpapi/prod/webapi/htf/htf_annual.json'),
       fetch(this.options.isCE ? `../vendor/htf_projection_annual.json` : `./htf_projection_annual.json`).then(res => res.json())]);
 
     this.master_data = {
@@ -232,35 +229,28 @@ export default class {
       projection: _projection
     }
 
-    console.log({
-      floods_historical: this.master_data.floods_historical.AnnualFloodCount.filter(annual_flood => annual_flood.stnId === '1611400'),
-      projection: this.master_data.projection.AnnualProjection.filter(proj => proj.stnId === '1611400')
-    });
   }
 
 
   async _fetch_station_data(station) {
 
-    if(this.master_data === null) {
-      await this.fetch_master_data();
-    }
 
     if (this._cache.has(station)) {
       this.data = this._cache.get(station);
     } else {
 
-      /*
+
       const [_historical, _projection] = await Promise.all([
         fetch(`https://api.tidesandcurrents.noaa.gov/dpapi/prod/webapi/htf/htf_annual.json?station=${station}`).then(res => res.json()),
-        fetch(`https://api.tidesandcurrents.noaa.gov/dpapi/prod/webapi/htf/htf_projection_annual.json?station=${station}`).then(res => res.json())]);
-      */
+        fetch(`https://api.tidesandcurrents.noaa.gov/dpapi/prod/webapi/htf/htf_projection_decadal.json?station=${station}`).then(res => res.json())]);
+
 
       this.data = {
         floods_historical: {
-          AnnualFloodCount: this.master_data.floods_historical.AnnualFloodCount.filter(annual_flood => annual_flood.stnId === station)
+          AnnualFloodCount: _historical.AnnualFloodCount.filter(annual_flood => annual_flood.stnId === station)
         },
         projection: {
-          AnnualProjection: this.master_data.projection.AnnualProjection.filter(proj => proj.stnId === station)
+          DecadalProjection: _projection.DecadalProjection.filter(proj => proj.stnId === station)
         }
       }
 
@@ -292,25 +282,48 @@ export default class {
     let data_rcp45 = []; //int_low
     let data_rcp85 = []; //int
 
-    let projection = this.data.projection.AnnualProjection;
-    let proj_year_idx = 0;
+    let projection = this.data.projection.DecadalProjection;
 
-    const _date = new Date();
+    for (let i = 1920; i <= 2100; i++) {
+      // build an array of labels
+      years.push(i.toString() + '-01-01');
+      const decadal_data = projection.find(p => p.decade === i);
+
+      if (typeof decadal_data === 'undefined') {
+        data_rcp45.push(Number.NaN);
+        data_rcp85.push(Number.NaN);
+      } else {
+        data_rcp45.push(decadal_data.intLow);
+        data_rcp85.push(decadal_data.intermediate);
+      }
+    }
+
+    /*
+    let prevIntLow = -1;
+    let prevIntermediate = -1;
 
     for (let i = 1920; i <= 2100; i++) {
       // build an array of labels
       years.push(i.toString() + '-01-01');
 
-      // prepend 0s to projected data
-      if (i < _date.getFullYear()) {
+      // while our counter is less than the first projected decade input Number.Nan
+      if(i < projection[0].decade) {
         data_rcp45.push(Number.NaN);
         data_rcp85.push(Number.NaN);
-      } else {
-        data_rcp45.push(projection[proj_year_idx].intLow);
-        data_rcp85.push(projection[proj_year_idx].intermediate);
-        proj_year_idx++;
+        continue;
       }
-    }
+
+      // if i mod 10 is 0, we have reached a decade.
+      // find the decade we are at and update the prev values.
+      if((i % 10) === 0) {
+        const decadal_data = projection.find(p => p.decade === i);
+        prevIntLow = decadal_data.intLow;
+        prevIntermediate = decadal_data.intermediate;
+      }
+
+      data_rcp45.push(prevIntLow);
+      data_rcp85.push(prevIntermediate);
+    }*/
 
     if (!this.element) {
       return;
@@ -346,6 +359,9 @@ export default class {
       }
     }
 
+    // The darker outline of the filled in area will not show up, because we have NaN values between the decade year and the following years.
+    // ex: 2020, NaN ..., NaN, 2030, NaN, ...
+
     let chart_rcp45 = {
       x: years,
       y: data_rcp45,
@@ -353,8 +369,10 @@ export default class {
       name: "Lower Emissions",
       fill: "tonexty",
       fillcolor: rgba(this.options.colors.rcp45.outerBand, this.options.colors.opacity.ann_proj_minmax),
+      // fillcolor: '#532382',
       line: {
         color: this.options.colors.rcp45.line,
+        // color: '#2d91a4',
         width: 2
       },
       xperiod:"M12",
@@ -384,10 +402,29 @@ export default class {
       }
     }
 
+
     let data = [chart_historic_min, chart_rcp45, chart_rcp85]
     const layout = this.options.layout;
     layout['xaxis'] = {...this.options.layout.xaxis, range: this.options.layout.xaxis.range.map((a) => a + '-01-01')}
+
+    /*let trace1 = {
+      x: years,
+      y: data_rcp85,
+      fill: 'tonexty',
+      mode: 'lines',
+      fillcolor: '#fcba03',
+      line: {
+        color : '#532382',
+        width: 2
+      }
+    };
+
+    console.log(years, data_rcp85)
+
+    let data = [trace1];*/
+
     Plotly.react(this.chart_element, data, this.options.layout, this.options.config);
+    //Plotly.react(this.chart_element, data);
 
     this._hover_handler = partial(this._request_show_popover.bind(this), false, {years, rcp45: data_rcp45, rcp85: data_rcp85, hist: data_hist}, this.options.colors, 1);
     this.chart_element.on('plotly_hover', this._hover_handler);
@@ -478,7 +515,7 @@ export default class {
       return this.__request_show_popover('xaxes' in event_data ? event_data.xaxes[0].l2p(event_data.xvals[0]) : null, null, `
         <div style="display: grid; grid-template-columns: auto auto;">
         ${ year >= new Date().getFullYear() ? `
-        <div class="label1">${year} projection</div>
+        <div class="label1">${year}s projection</div>
           <div class="bg-rcp85 label2" >Higher Emissions</div>
           <div class="bg-rcp85" style="grid-column: 1 / span 2; padding-bottom: 0.25rem;">
             <div style="display: flex; align-items: center;">
