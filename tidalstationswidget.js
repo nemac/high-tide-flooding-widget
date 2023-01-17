@@ -96,7 +96,7 @@ export default class {
     };
 
     this.master_data = null;
-    this.fetch_master_data();
+    // this.fetch_master_data();
 
     this.data = {};
     this.element = element;
@@ -230,7 +230,6 @@ export default class {
     }
 
   }
-
 
   async _fetch_station_data(station) {
 

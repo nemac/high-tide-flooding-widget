@@ -4015,8 +4015,8 @@
           y_dtick: 5
         }
       };
-      this.master_data = null;
-      this.fetch_master_data();
+      this.master_data = null; // this.fetch_master_data();
+
       this.data = {};
       this.element = element;
       this.chart_element = null;
